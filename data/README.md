@@ -7,16 +7,17 @@ by the framework. Unknown test users/items are filtered by the dataset pipeline.
 
 | Dataset | Expected path | Description |
 | --- | --- | --- |
-| LastFM-1K | `data/lastfm1k/user_events_30000.csv` | Original experiment's 30,000-track subset; implicit rating 1.0 |
+| LastFM-1K | `data/lastfm1k/user_events1k.csv` | Complete prepared event CSV; no track subsampling; implicit rating 1.0 |
 | MovieLens-10M | `data/movielens10m/movielens10m.csv` | Rating events with original timestamps |
 
 The LastFM YAML preserves the original float32 timestamp conversion. Changing it
 can alter ordering of near-simultaneous events and the resulting split.
 
-The original LastFM preprocessing scripts referenced intermediate CSV files and
-incompatible ID mappings. They have not been presented as an exact raw-to-paper
-recipe. Obtain the prepared subset from the experiment maintainers to reproduce
-its results; otherwise report the new preprocessing and subset explicitly.
+The complete prepared LastFM CSV available in the source workspace contains
+992 users, 960,402 distinct tracks, and 16,936,136 interactions. Both LastFM
+configurations read this full file; there is no 30,000-track cap. These counts
+refer to the prepared CSV, before temporal splitting and unknown-item filtering,
+not necessarily to every raw event in the original TSV.
 
 MovieLens `ratings.dat` can be converted to the required schema by reading its
 `user::movie::rating::timestamp` fields and writing the four CSV columns above.

@@ -2,7 +2,7 @@ reader:
   loading_strategy: dataset
   data_type: transaction
   reading_method: local
-  local_path: data/lastfm1k/user_events_30000.csv
+  local_path: data/lastfm1k/user_events1k.csv
   rating_type: explicit
   sep: ','
   labels:
