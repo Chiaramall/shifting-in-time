@@ -143,18 +143,9 @@ scores; see the notes at the end of the examples.
 | `custom_models/` | Five experiment-specific implementations registered over WarpRec defaults |
 | `warprec/` | Sequential models and retained data/training/evaluation infrastructure |
 | `paper/qualitative/` | Two archived SASRec examples and JSON evidence |
-| `paper/checkpoint_manifest.json` | Historical weight hashes and training metadata; no weights |
 
-Aggregate experimental results are not bundled: the available archived tables do
-not consistently match the supplied manuscript. The commands above generate new
-results locally under the ignored `results/` directory. Model-specific cohorts mean
-that FRBO comparisons are descriptive, rather than paired comparisons over one
-common set of users. Full training and numerical reproduction require the original
-prepared data and a compatible environment; GPU determinism is not guaranteed.
 
-Checkpoints, raw data, logs, caches, unrelated experiments, and earlier model
-variants are excluded from Git. Generated checkpoints stay local under
-`checkpoints/` and are ignored automatically.
+
 
 ## Tests
 
