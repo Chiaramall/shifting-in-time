@@ -140,8 +140,8 @@ scores; see the notes at the end of the examples.
 | --- | --- |
 | `config/` | Train/evaluation YAML for the two datasets; every window is 20 |
 | `experiments/` | Training, catalogue perturbations, shared helpers, metrics, tests |
-| `custom_models/` | Five experiment-specific implementations registered over WarpRec defaults |
-| `warprec/` | Sequential models and retained data/training/evaluation infrastructure |
+| `models/` | All nine paper model implementations and shared training objectives |
+| `warprec/` | Shared data, training, and evaluation infrastructure |
 | `paper/qualitative/` | Two archived SASRec examples and JSON evidence |
 
 

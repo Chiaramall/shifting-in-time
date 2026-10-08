@@ -216,7 +216,7 @@ writer:
   save_split: false
 general:
   custom_models:
-  - custom_models
+  - models
   device: cuda
   precision: float32
   time_report: false

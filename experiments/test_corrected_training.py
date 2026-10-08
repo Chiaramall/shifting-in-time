@@ -5,7 +5,7 @@ import unittest
 from collections import Counter
 import torch
 from torch.nn import functional as F
-from warprec.recommenders.sequential_recommender.corrected_objectives import info_nce_logits,calibrated_bce,contrastive_views
+from models.corrected_objectives import info_nce_logits,calibrated_bce,contrastive_views
 from semantic_training import SemanticCollator
 from warprec.data.entities.train_structures.session_structures import SessionDataset
 
@@ -59,7 +59,7 @@ class CompactLoaderTests(unittest.TestCase):
 
 class BertMaskPositionTests(unittest.TestCase):
  def test_real_mask_at_position_zero_is_trained(self):
-  from custom_models.bert4rec import BERT4Rec
+  from models.bert4rec import BERT4Rec
   class Tiny(torch.nn.Module):
    def __init__(self):
     super().__init__();self.corrected_training=True;self.padding_token_id=3;self.n_items=3;self.reg_weight=0.

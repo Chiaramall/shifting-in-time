@@ -172,10 +172,9 @@ class gSASRec(IterativeRecommender, SequentialRecommenderUtils):
 
     def _gbce_loss_function(self) -> Callable:
         """Return the General Binary Cross-Entropy (GBCE) loss.
-
-        Uses a logsumexp formulation and keeps tensors in float32. The previous
-        implementation promoted the main logits to float64, which can push
-        gSASRec over memory limits on larger datasets.
+        
+        Uses a numerically stable formulation based on logsumexp to avoid
+        overflow/underflow issues with large negative samples and temperature scaling.
 
         Returns:
             Callable: The GBCE loss.
@@ -196,16 +195,39 @@ class gSASRec(IterativeRecommender, SequentialRecommenderUtils):
             )
 
             if self.corrected_training:
-                from .corrected_objectives import calibrated_bce
-                return calibrated_bce(logits, labels != self.n_items, self.n_items, self.gbce_t)
+                from models.corrected_objectives import calibrated_bce
+                return calibrated_bce(logits,labels!=self.n_items,self.n_items,self.gbce_t)
 
-            pos_logits = logits[:, :, 0:1]
-            neg_logits = logits[:, :, 1:]
-            mask = (labels != self.n_items).float()
-            diff = neg_logits - pos_logits
-            combined = torch.cat([torch.zeros_like(pos_logits), diff], dim=-1)
-            loss_per_position = torch.logsumexp(combined, dim=-1) * mask
+            # Separate positive and negative logits
+            pos_logits = logits[:, :, 0:1]  # [batch_size, seq_len, 1]
+            neg_logits = logits[:, :, 1:]   # [batch_size, seq_len, neg_samples]
+
+            # Create mask for valid targets
+            mask = (labels != self.n_items).float()  # [batch_size, seq_len]
+
+            # Numerically stable GBCE loss using logsumexp
+            # Loss = log(1 + sum_i(exp(neg_i - pos)))
+            # = logsumexp([0, neg_1 - pos, neg_2 - pos, ...])
+            
+            # Compute relative logits
+            diff = neg_logits - pos_logits  # [batch_size, seq_len, neg_samples]
+            
+            # Stack zero (for the positive) and differences (for negatives)
+            combined = torch.cat(
+                [torch.zeros_like(pos_logits), diff], 
+                dim=-1
+            )  # [batch_size, seq_len, neg_samples + 1]
+            
+            # Compute logsumexp along negative dimension (dimension -1)
+            # This is numerically stable and handles both large and small values
+            loss_per_position = torch.logsumexp(combined, dim=-1)  # [batch_size, seq_len]
+            
+            # Apply mask to ignore padding
+            loss_per_position = loss_per_position * mask
+            
+            # Average loss: sum across seq and batch, normalize by valid positions
             total_loss = loss_per_position.sum() / mask.sum().clamp(min=1)
+            
             return total_loss
 
         return gbce_loss_fn

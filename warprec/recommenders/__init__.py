@@ -1,4 +1,3 @@
-from . import sequential_recommender
 from . import trainer
 from . import lr_scheduler_wrapper
 from .base_recommender import (
@@ -14,7 +13,6 @@ from .similarities import Similarity
 from .loops import train_loop
 
 __all__ = [
-    "sequential_recommender",
     "trainer",
     "lr_scheduler_wrapper",
     "Recommender",

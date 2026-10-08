@@ -14,4 +14,4 @@ dynamic = ["dependencies"]
 dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools.packages.find]
-include = ["warprec*", "custom_models*"]
+include = ["warprec*", "models*"]
