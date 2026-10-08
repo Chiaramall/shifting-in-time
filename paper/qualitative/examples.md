@@ -4,7 +4,7 @@ Selezione illustrativa a posteriori fra casi con metadati risolti; non è un cam
 
 Nel report originale, FRBO è stato ricalcolato dai ranking per tutte e tre le destinazioni. La ricostruzione della finestra dalla storia training completa e l’assenza dei nuovi item dal train sono verifiche documentate nel report originale; i dati completi non sono inclusi in questa repository. Gli item inseriti restano raccomandabili: segnaliamo quelli presenti nella top-10.
 
-## movielens10m — 59996, 20%
+## movielens10m — 59996, 30%
 
 Storia training: 220 eventi. La dominanza riportata riguarda soltanto la finestra di 20 eventi.
 
