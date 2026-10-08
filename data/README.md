@@ -7,7 +7,7 @@ by the framework. Unknown test users/items are filtered by the dataset pipeline.
 
 | Dataset | Expected path | Description |
 | --- | --- | --- |
-| LastFM-1K | `data/lastfm1k/user_events1k.csv` | Complete prepared event CSV; no track subsampling; implicit rating 1.0 |
+| LastFM-1K | `data/lastfm1k/user_events1k.csv` | Complete prepared event CSV; implicit rating 1.0 |
 | MovieLens-10M | `data/movielens10m/movielens10m.csv` | Rating events with original timestamps |
 
 The LastFM YAML preserves the original float32 timestamp conversion. Changing it
