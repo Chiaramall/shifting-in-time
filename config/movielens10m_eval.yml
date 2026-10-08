@@ -23,7 +23,7 @@ models:
     batch_size: 2048
     dropout_prob: 0.5
     embedding_size: 256
-    epochs: 50
+    epochs: 300
     inner_size: 1024
     learning_rate: 0.001
     max_seq_len: 20
@@ -41,7 +41,7 @@ models:
     batch_size: 2048
     dropout_prob: 0.5
     embedding_size: 256
-    epochs: 50
+    epochs: 300
     inner_size: 1024
     learning_rate: 0.001
     mask_prob: 0.15
@@ -60,7 +60,7 @@ models:
     batch_size: 512
     dropout_prob: 0.5
     embedding_size: 256
-    epochs: 50
+    epochs: 300
     gbce_t: 0.75
     inner_size: 256
     learning_rate: 0.001
@@ -79,7 +79,7 @@ models:
     batch_size: 2048
     dropout_prob: 0.5
     embedding_size: 256
-    epochs: 50
+    epochs: 300
     hidden_size: 256
     learning_rate: 0.001
     max_seq_len: 20
@@ -96,7 +96,7 @@ models:
     batch_size: 2048
     dropout_prob: 0.5
     embedding_size: 256
-    epochs: 50
+    epochs: 300
     inner_size: 512
     k_interests: 10
     learning_rate: 0.001
@@ -115,7 +115,7 @@ models:
     batch_size: 2048
     dropout_prob: 0.5
     embedding_size: 256
-    epochs: 50
+    epochs: 300
     inner_size: 1024
     learning_rate: 0.001
     max_seq_len: 20
@@ -139,7 +139,7 @@ models:
     crop_eta: 0.6
     dropout_prob: 0.5
     embedding_size: 256
-    epochs: 50
+    epochs: 300
     inner_size: 1024
     learning_rate: 0.001
     mask_gamma: 0.3
@@ -162,7 +162,7 @@ models:
     batch_size: 2048
     dropout_prob: 0.5
     embedding_size: 256
-    epochs: 50
+    epochs: 300
     inner_size: 1024
     learning_rate: 0.001
     max_seq_len: 20
@@ -186,7 +186,7 @@ models:
     c: 10
     dropout_prob: 0.5
     embedding_size: 256
-    epochs: 50
+    epochs: 300
     inner_size: 1024
     learning_rate: 0.001
     max_seq_len: 20

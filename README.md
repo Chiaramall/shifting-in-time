@@ -89,7 +89,7 @@ python experiments/train_baseline_budget.py \
 1. Split each user's interactions chronologically, holding out the last 10% for
    testing. The supplied fixed-budget configurations have no validation split.
 2. Train on original interactions, with seed 42. The preserved configurations use
-   **50 training epochs** and keep the final checkpoint. This epoch count is
+   **300 training epochs** and keep the final checkpoint. This epoch count is
    separate from the **20-item** input window.
 3. Select a fixed, model-specific cohort with at least one relevant item in the
    original Top-20. Evaluate against the original Top-10.
