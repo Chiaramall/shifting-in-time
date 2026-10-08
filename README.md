@@ -154,5 +154,4 @@ python -m unittest discover -s experiments -p 'test_*.py'
 ```
 
 Tests cover the finite ranking metric, catalogue selection/insertion, and corrected
-training objectives. See [NOTICE.md](NOTICE.md) for upstream attribution and
-licensing status.
+training objectives.
