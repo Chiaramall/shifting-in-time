@@ -1,0 +1,213 @@
+reader:
+  loading_strategy: dataset
+  data_type: transaction
+  reading_method: local
+  local_path: data/movielens10m/movielens10m.csv
+  rating_type: explicit
+  sep: ','
+  labels:
+    user_id_label: user_id
+    item_id_label: item_id
+    rating_label: rating
+    timestamp_label: timestamp
+  dtypes:
+    user_id_type: str
+  header: true
+splitter:
+  test_splitting:
+    strategy: temporal_holdout
+    ratio: 0.1
+models:
+  SASRec:
+    attn_dropout_prob: 0.4
+    batch_size: 2048
+    dropout_prob: 0.5
+    embedding_size: 256
+    epochs: 50
+    inner_size: 1024
+    learning_rate: 0.001
+    max_seq_len: 20
+    n_heads: 4
+    n_layers: 2
+    neg_samples: 10
+    reg_weight: 0.0
+    weight_decay: 0.01
+    meta:
+      save_model: false
+      save_recs: false
+  BERT4Rec:
+    attn_dropout_prob: 0.4
+    batch_size: 2048
+    dropout_prob: 0.5
+    embedding_size: 256
+    epochs: 50
+    inner_size: 1024
+    learning_rate: 0.001
+    mask_prob: 0.15
+    max_seq_len: 20
+    n_heads: 4
+    n_layers: 4
+    neg_samples: 10
+    reg_weight: 0.0
+    weight_decay: 0.01
+    meta:
+      save_model: false
+      save_recs: false
+  gSASRec:
+    attn_dropout_prob: 0.4
+    batch_size: 512
+    dropout_prob: 0.5
+    embedding_size: 256
+    epochs: 50
+    gbce_t: 0.75
+    inner_size: 256
+    learning_rate: 0.001
+    max_seq_len: 20
+    n_heads: 4
+    n_layers: 2
+    neg_samples: 10
+    reg_weight: 0.0
+    reuse_item_embeddings: true
+    weight_decay: 0.01
+    meta:
+      save_model: false
+      save_recs: false
+  GRU4Rec:
+    batch_size: 2048
+    dropout_prob: 0.5
+    embedding_size: 256
+    epochs: 50
+    hidden_size: 256
+    learning_rate: 0.001
+    max_seq_len: 20
+    neg_samples: 10
+    num_layers: 2
+    reg_weight: 0.0
+    weight_decay: 0.01
+    meta:
+      save_model: false
+      save_recs: false
+  LightSANs:
+    attn_dropout_prob: 0.4
+    batch_size: 2048
+    dropout_prob: 0.5
+    embedding_size: 256
+    epochs: 50
+    inner_size: 512
+    k_interests: 10
+    learning_rate: 0.001
+    max_seq_len: 20
+    n_heads: 4
+    n_layers: 2
+    neg_samples: 10
+    reg_weight: 0.0
+    weight_decay: 0.01
+    meta:
+      save_model: false
+      save_recs: false
+  DuoRec:
+    attn_dropout_prob: 0.4
+    batch_size: 2048
+    dropout_prob: 0.5
+    embedding_size: 256
+    epochs: 50
+    inner_size: 1024
+    learning_rate: 0.001
+    max_seq_len: 20
+    n_heads: 4
+    n_layers: 2
+    neg_samples: 0
+    reg_weight: 0.0
+    sim_type: dot
+    ssl_lambda: 0.5
+    ssl_lambda_sem: 0.1
+    ssl_type: us_x
+    tau: 0.1
+    weight_decay: 0.01
+    meta:
+      save_model: false
+      save_recs: false
+  CL4SRec:
+    attn_dropout_prob: 0.4
+    batch_size: 2048
+    crop_eta: 0.6
+    dropout_prob: 0.5
+    embedding_size: 256
+    epochs: 50
+    inner_size: 1024
+    learning_rate: 0.001
+    mask_gamma: 0.3
+    max_seq_len: 20
+    n_heads: 4
+    n_layers: 2
+    neg_samples: 0
+    reg_weight: 0.0
+    reorder_beta: 0.6
+    sim_type: dot
+    ssl_lambda: 0.1
+    tau: 0.1
+    weight_decay: 0.01
+    meta:
+      save_model: false
+      save_recs: false
+  eSASRec:
+    attn_dropout_prob: 0.4
+    batch_size: 2048
+    dropout_prob: 0.5
+    embedding_size: 256
+    epochs: 50
+    inner_size: 1024
+    learning_rate: 0.001
+    max_seq_len: 20
+    mn_ratio: 0.5
+    n_heads: 4
+    n_layers: 2
+    neg_samples: 10
+    reg_weight: 0.0
+    use_ligr: false
+    use_relative_pos: true
+    use_sampled_softmax: true
+    weight_decay: 0.01
+    meta:
+      save_model: false
+      save_recs: false
+  BSARec:
+    alpha: 0.5
+    attn_dropout_prob: 0.4
+    batch_size: 2048
+    c: 10
+    dropout_prob: 0.5
+    embedding_size: 256
+    epochs: 50
+    inner_size: 1024
+    learning_rate: 0.001
+    max_seq_len: 20
+    n_heads: 4
+    n_layers: 2
+    neg_samples: 10
+    reg_weight: 0.0
+    weight_decay: 0.01
+    meta:
+      save_model: false
+      save_recs: false
+evaluation:
+  top_k:
+  - 10
+  batch_size: 512
+  metrics:
+  - nDCG
+  - Recall
+  strategy: full
+  validation_metric: nDCG@10
+  compute_per_user: false
+writer:
+  dataset_name: movielens10m
+  writing_method: local
+  local_experiment_path: results
+  save_split: false
+general:
+  custom_models:
+  - custom_models
+  device: cuda
+  precision: float32
+  time_report: false

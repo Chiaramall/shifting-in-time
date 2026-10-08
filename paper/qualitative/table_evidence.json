@@ -1,0 +1,1535 @@
+[
+  {
+    "dataset": "movielens10m",
+    "user_id": "59996",
+    "intensity": "20",
+    "training_length": 220,
+    "controls": {
+      "old": {
+        "model": "SASRec",
+        "user_idx": "54341",
+        "user_id": "59996",
+        "destination": "old",
+        "intensity": "0.2",
+        "selected_count": "4",
+        "history_len": "220",
+        "original_sequence": [
+          4448,
+          2467,
+          2466,
+          3682,
+          3830,
+          4133,
+          3764,
+          2489,
+          4115,
+          2475,
+          1442,
+          7706,
+          4944,
+          3409,
+          6525,
+          1489,
+          3923,
+          2660,
+          6055,
+          2468
+        ],
+        "perturbed_sequence": [
+          10025,
+          10401,
+          10169,
+          9984,
+          2467,
+          2466,
+          3682,
+          3830,
+          4133,
+          3764,
+          2489,
+          4115,
+          2475,
+          1442,
+          4944,
+          3409,
+          1489,
+          3923,
+          2660,
+          6055
+        ],
+        "removed_positions": [
+          0,
+          11,
+          14,
+          19
+        ],
+        "inserted_positions": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "new_items": [
+          10025,
+          10401,
+          10169,
+          9984
+        ],
+        "original_top_items": [
+          3824,
+          6434,
+          3594,
+          3800,
+          6059,
+          3807,
+          3751,
+          3790,
+          6420,
+          3965
+        ],
+        "perturbed_top_items": [
+          8040,
+          8125,
+          3751,
+          6416,
+          9293,
+          1248,
+          3824,
+          8136,
+          4232,
+          3965
+        ],
+        "frbo10": "0.07420298469599083",
+        "verified_frbo10": 0.07420298469599083
+      },
+      "middle": {
+        "model": "SASRec",
+        "user_idx": "54341",
+        "user_id": "59996",
+        "destination": "middle",
+        "intensity": "0.2",
+        "selected_count": "4",
+        "history_len": "220",
+        "original_sequence": [
+          4448,
+          2467,
+          2466,
+          3682,
+          3830,
+          4133,
+          3764,
+          2489,
+          4115,
+          2475,
+          1442,
+          7706,
+          4944,
+          3409,
+          6525,
+          1489,
+          3923,
+          2660,
+          6055,
+          2468
+        ],
+        "perturbed_sequence": [
+          2467,
+          2466,
+          3682,
+          3830,
+          4133,
+          3764,
+          2489,
+          4115,
+          10025,
+          10401,
+          10169,
+          9984,
+          2475,
+          1442,
+          4944,
+          3409,
+          1489,
+          3923,
+          2660,
+          6055
+        ],
+        "removed_positions": [
+          0,
+          11,
+          14,
+          19
+        ],
+        "inserted_positions": [
+          8,
+          9,
+          10,
+          11
+        ],
+        "new_items": [
+          10025,
+          10401,
+          10169,
+          9984
+        ],
+        "original_top_items": [
+          3824,
+          6434,
+          3594,
+          3800,
+          6059,
+          3807,
+          3751,
+          3790,
+          6420,
+          3965
+        ],
+        "perturbed_top_items": [
+          8040,
+          8125,
+          3751,
+          6416,
+          9293,
+          1248,
+          3824,
+          4232,
+          8136,
+          3965
+        ],
+        "frbo10": "0.07420298469599083",
+        "verified_frbo10": 0.07420298469599083
+      },
+      "recent": {
+        "model": "SASRec",
+        "user_idx": "54341",
+        "user_id": "59996",
+        "destination": "recent",
+        "intensity": "0.2",
+        "selected_count": "4",
+        "history_len": "220",
+        "original_sequence": [
+          4448,
+          2467,
+          2466,
+          3682,
+          3830,
+          4133,
+          3764,
+          2489,
+          4115,
+          2475,
+          1442,
+          7706,
+          4944,
+          3409,
+          6525,
+          1489,
+          3923,
+          2660,
+          6055,
+          2468
+        ],
+        "perturbed_sequence": [
+          2467,
+          2466,
+          3682,
+          3830,
+          4133,
+          3764,
+          2489,
+          4115,
+          2475,
+          1442,
+          4944,
+          3409,
+          1489,
+          3923,
+          2660,
+          6055,
+          10025,
+          10401,
+          10169,
+          9984
+        ],
+        "removed_positions": [
+          0,
+          11,
+          14,
+          19
+        ],
+        "inserted_positions": [
+          16,
+          17,
+          18,
+          19
+        ],
+        "new_items": [
+          10025,
+          10401,
+          10169,
+          9984
+        ],
+        "original_top_items": [
+          3824,
+          6434,
+          3594,
+          3800,
+          6059,
+          3807,
+          3751,
+          3790,
+          6420,
+          3965
+        ],
+        "perturbed_top_items": [
+          9984,
+          4694,
+          7458,
+          9176,
+          4705,
+          9044,
+          4693,
+          4692,
+          6532,
+          9012
+        ],
+        "frbo10": "0.0",
+        "verified_frbo10": 0.0
+      }
+    },
+    "original": [
+      {
+        "item_idx": 3824,
+        "item_id": 2514,
+        "title": "Pet Sematary II (1992)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 6434,
+        "item_id": 2515,
+        "title": "Children of the Corn II: The Final Sacrifice (1993)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 3594,
+        "item_id": 1978,
+        "title": "Friday the 13th Part V: A New Beginning (1985)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 3800,
+        "item_id": 1981,
+        "title": "Friday the 13th Part VIII: Jason Takes Manhattan (1989)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 6059,
+        "item_id": 2655,
+        "title": "Howling II: Your Sister Is a Werewolf (1985)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 3807,
+        "item_id": 1985,
+        "title": "Halloween 4: The Return of Michael Myers (1988)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 3751,
+        "item_id": 1996,
+        "title": "Poltergeist III (1988)",
+        "genres": [
+          "Horror",
+          "Thriller"
+        ]
+      },
+      {
+        "item_idx": 3790,
+        "item_id": 1979,
+        "title": "Friday the 13th Part VI: Jason Lives (1986)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 6420,
+        "item_id": 2516,
+        "title": "Children of the Corn III (1994)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 3965,
+        "item_id": 2113,
+        "title": "Graveyard Shift (1990)",
+        "genres": [
+          "Horror",
+          "Thriller"
+        ]
+      }
+    ],
+    "recent": [
+      {
+        "item_idx": 9984,
+        "item_id": 1155,
+        "title": "Invitation, The (Zaproszenie) (1986)",
+        "genres": [
+          "Drama"
+        ]
+      },
+      {
+        "item_idx": 4694,
+        "item_id": 816,
+        "title": "Two Deaths (1995)",
+        "genres": [
+          "Drama"
+        ]
+      },
+      {
+        "item_idx": 7458,
+        "item_id": 1164,
+        "title": "Two or Three Things I Know About Her (1966)",
+        "genres": [
+          "Drama"
+        ]
+      },
+      {
+        "item_idx": 9176,
+        "item_id": 857,
+        "title": "Crows and Sparrows (Wuya yu maque) (1949)",
+        "genres": [
+          "Drama"
+        ]
+      },
+      {
+        "item_idx": 4705,
+        "item_id": 843,
+        "title": "Lotto Land (1995)",
+        "genres": [
+          "Drama"
+        ]
+      },
+      {
+        "item_idx": 9044,
+        "item_id": 873,
+        "title": "Shadow of Angels (Schatten der Engel) (1976)",
+        "genres": [
+          "Drama"
+        ]
+      },
+      {
+        "item_idx": 4693,
+        "item_id": 797,
+        "title": "Old Lady Who Walked in the Sea, The (Vieille qui marchait dans la mer, La) (1991)",
+        "genres": [
+          "Comedy"
+        ]
+      },
+      {
+        "item_idx": 4692,
+        "item_id": 794,
+        "title": "Midnight Dancers (Sibak) (1994)",
+        "genres": [
+          "Comedy",
+          "Drama"
+        ]
+      },
+      {
+        "item_idx": 6532,
+        "item_id": 845,
+        "title": "Day the Sun Turned Cold, The (Tianguo niezi) (1994)",
+        "genres": [
+          "Drama"
+        ]
+      },
+      {
+        "item_idx": 9012,
+        "item_id": 855,
+        "title": "Every Other Weekend (Un week-end sur deux) (1990)",
+        "genres": [
+          "Drama"
+        ]
+      }
+    ],
+    "history": [
+      {
+        "item_idx": 4448,
+        "item_id": 1771,
+        "title": "Night Flier (1997)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 2467,
+        "item_id": 1992,
+        "title": "Child's Play 2 (1990)",
+        "genres": [
+          "Horror",
+          "Thriller"
+        ]
+      },
+      {
+        "item_idx": 2466,
+        "item_id": 2315,
+        "title": "Bride of Chucky (1998)",
+        "genres": [
+          "Comedy",
+          "Horror",
+          "Thriller"
+        ]
+      },
+      {
+        "item_idx": 3682,
+        "item_id": 2793,
+        "title": "American Werewolf in Paris, An (1997)",
+        "genres": [
+          "Comedy",
+          "Horror",
+          "Romance",
+          "Thriller"
+        ]
+      },
+      {
+        "item_idx": 3830,
+        "item_id": 2898,
+        "title": "Dark Half, The (1993)",
+        "genres": [
+          "Horror",
+          "Mystery"
+        ]
+      },
+      {
+        "item_idx": 4133,
+        "item_id": 606,
+        "title": "Candyman: Farewell to the Flesh (1995)",
+        "genres": [
+          "Fantasy",
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 3764,
+        "item_id": 1999,
+        "title": "Exorcist III, The (1990)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 2489,
+        "item_id": 2107,
+        "title": "Halloween H20: 20 Years Later (1998)",
+        "genres": [
+          "Horror",
+          "Thriller"
+        ]
+      },
+      {
+        "item_idx": 4115,
+        "item_id": 2327,
+        "title": "Tales from the Darkside: The Movie (1990)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 2475,
+        "item_id": 2328,
+        "title": "Vampires (1998)",
+        "genres": [
+          "Horror",
+          "Western"
+        ]
+      },
+      {
+        "item_idx": 1442,
+        "item_id": 2389,
+        "title": "Psycho (1998)",
+        "genres": [
+          "Crime",
+          "Horror",
+          "Thriller"
+        ]
+      },
+      {
+        "item_idx": 7706,
+        "item_id": 2452,
+        "title": "Gate II: Trespassers, The (1990)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 4944,
+        "item_id": 2461,
+        "title": "Leatherface: Texas Chainsaw Massacre III (1990)",
+        "genres": [
+          "Comedy",
+          "Horror",
+          "Thriller"
+        ]
+      },
+      {
+        "item_idx": 3409,
+        "item_id": 3709,
+        "title": "Sleepwalkers (1992)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 6525,
+        "item_id": 3942,
+        "title": "Sorority House Massacre II (1990)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 1489,
+        "item_id": 12,
+        "title": "Dracula: Dead and Loving It (1995)",
+        "genres": [
+          "Comedy",
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 3923,
+        "item_id": 891,
+        "title": "Halloween: The Curse of Michael Myers (1995)",
+        "genres": [
+          "Horror",
+          "Thriller"
+        ]
+      },
+      {
+        "item_idx": 2660,
+        "item_id": 1623,
+        "title": "Wishmaster (1997)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 6055,
+        "item_id": 1756,
+        "title": "Prophecy II, The (1998)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "item_idx": 2468,
+        "item_id": 1993,
+        "title": "Child's Play 3 (1991)",
+        "genres": [
+          "Comedy",
+          "Horror",
+          "Thriller"
+        ]
+      }
+    ],
+    "removed": [
+      {
+        "position": 1,
+        "item_idx": 4448,
+        "item_id": 1771,
+        "title": "Night Flier (1997)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "position": 12,
+        "item_idx": 7706,
+        "item_id": 2452,
+        "title": "Gate II: Trespassers, The (1990)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "position": 15,
+        "item_idx": 6525,
+        "item_id": 3942,
+        "title": "Sorority House Massacre II (1990)",
+        "genres": [
+          "Horror"
+        ]
+      },
+      {
+        "position": 20,
+        "item_idx": 2468,
+        "item_id": 1993,
+        "title": "Child's Play 3 (1991)",
+        "genres": [
+          "Comedy",
+          "Horror",
+          "Thriller"
+        ]
+      }
+    ],
+    "inserted": [
+      {
+        "position": 17,
+        "item_idx": 10025,
+        "item_id": 63181,
+        "title": "Tokyo Gore Police (Tôkyô zankoku keisatsu) (2008)",
+        "genres": [
+          "Action",
+          "Horror"
+        ]
+      },
+      {
+        "position": 18,
+        "item_idx": 10401,
+        "item_id": 59478,
+        "title": "Unknown Solider, The (Unbekannte Soldat, Der) (2006)",
+        "genres": [
+          "Documentary"
+        ]
+      },
+      {
+        "position": 19,
+        "item_idx": 10169,
+        "item_id": 25941,
+        "title": "Letter from an Unknown Woman (1948)",
+        "genres": [
+          "Drama",
+          "Romance"
+        ]
+      },
+      {
+        "position": 20,
+        "item_idx": 9984,
+        "item_id": 1155,
+        "title": "Invitation, The (Zaproszenie) (1986)",
+        "genres": [
+          "Drama"
+        ]
+      }
+    ]
+  },
+  {
+    "dataset": "lastfm1k",
+    "user_id": "user_000653",
+    "intensity": "30",
+    "training_length": 5339,
+    "controls": {
+      "old": {
+        "model": "SASRec",
+        "user_idx": "645",
+        "user_id": "user_000653",
+        "destination": "old",
+        "intensity": "0.3",
+        "selected_count": "6",
+        "history_len": "5339",
+        "original_sequence": [
+          5975,
+          5603,
+          904,
+          5600,
+          5977,
+          5603,
+          5977,
+          5975,
+          5600,
+          904,
+          5976,
+          904,
+          2854,
+          5661,
+          5975,
+          5981,
+          5603,
+          5976,
+          5981,
+          5603
+        ],
+        "perturbed_sequence": [
+          19706,
+          22904,
+          29068,
+          22905,
+          26038,
+          20383,
+          5975,
+          5603,
+          904,
+          5603,
+          5975,
+          904,
+          5976,
+          904,
+          2854,
+          5661,
+          5975,
+          5981,
+          5976,
+          5981
+        ],
+        "removed_positions": [
+          3,
+          4,
+          6,
+          8,
+          16,
+          19
+        ],
+        "inserted_positions": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "new_items": [
+          19706,
+          22904,
+          29068,
+          22905,
+          26038,
+          20383
+        ],
+        "original_top_items": [
+          10863,
+          12239,
+          4294,
+          18006,
+          23723,
+          18074,
+          18148,
+          906,
+          5344,
+          13490
+        ],
+        "perturbed_top_items": [
+          18078,
+          11603,
+          12239,
+          10863,
+          18148,
+          13239,
+          5344,
+          9386,
+          18006,
+          5278
+        ],
+        "frbo10": "0.2968964302161785",
+        "verified_frbo10": 0.2968964302161785
+      },
+      "middle": {
+        "model": "SASRec",
+        "user_idx": "645",
+        "user_id": "user_000653",
+        "destination": "middle",
+        "intensity": "0.3",
+        "selected_count": "6",
+        "history_len": "5339",
+        "original_sequence": [
+          5975,
+          5603,
+          904,
+          5600,
+          5977,
+          5603,
+          5977,
+          5975,
+          5600,
+          904,
+          5976,
+          904,
+          2854,
+          5661,
+          5975,
+          5981,
+          5603,
+          5976,
+          5981,
+          5603
+        ],
+        "perturbed_sequence": [
+          5975,
+          5603,
+          904,
+          5603,
+          5975,
+          904,
+          5976,
+          19706,
+          22904,
+          29068,
+          22905,
+          26038,
+          20383,
+          904,
+          2854,
+          5661,
+          5975,
+          5981,
+          5976,
+          5981
+        ],
+        "removed_positions": [
+          3,
+          4,
+          6,
+          8,
+          16,
+          19
+        ],
+        "inserted_positions": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "new_items": [
+          19706,
+          22904,
+          29068,
+          22905,
+          26038,
+          20383
+        ],
+        "original_top_items": [
+          10863,
+          12239,
+          4294,
+          18006,
+          23723,
+          18074,
+          18148,
+          906,
+          5344,
+          13490
+        ],
+        "perturbed_top_items": [
+          18078,
+          11603,
+          12239,
+          10863,
+          18148,
+          13239,
+          5344,
+          9386,
+          18006,
+          1581
+        ],
+        "frbo10": "0.2968964302161785",
+        "verified_frbo10": 0.2968964302161785
+      },
+      "recent": {
+        "model": "SASRec",
+        "user_idx": "645",
+        "user_id": "user_000653",
+        "destination": "recent",
+        "intensity": "0.3",
+        "selected_count": "6",
+        "history_len": "5339",
+        "original_sequence": [
+          5975,
+          5603,
+          904,
+          5600,
+          5977,
+          5603,
+          5977,
+          5975,
+          5600,
+          904,
+          5976,
+          904,
+          2854,
+          5661,
+          5975,
+          5981,
+          5603,
+          5976,
+          5981,
+          5603
+        ],
+        "perturbed_sequence": [
+          5975,
+          5603,
+          904,
+          5603,
+          5975,
+          904,
+          5976,
+          904,
+          2854,
+          5661,
+          5975,
+          5981,
+          5976,
+          5981,
+          19706,
+          22904,
+          29068,
+          22905,
+          26038,
+          20383
+        ],
+        "removed_positions": [
+          3,
+          4,
+          6,
+          8,
+          16,
+          19
+        ],
+        "inserted_positions": [
+          14,
+          15,
+          16,
+          17,
+          18,
+          19
+        ],
+        "new_items": [
+          19706,
+          22904,
+          29068,
+          22905,
+          26038,
+          20383
+        ],
+        "original_top_items": [
+          10863,
+          12239,
+          4294,
+          18006,
+          23723,
+          18074,
+          18148,
+          906,
+          5344,
+          13490
+        ],
+        "perturbed_top_items": [
+          20383,
+          20384,
+          20379,
+          20402,
+          20377,
+          20385,
+          20430,
+          20381,
+          20424,
+          20408
+        ],
+        "frbo10": "0.0",
+        "verified_frbo10": 0.0
+      }
+    },
+    "original": [
+      {
+        "item_idx": 10863,
+        "item_id": 11622,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "85863982-7efd-4dff-bcee-4bf5d66fd43b",
+        "title": "I Need You",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 12239,
+        "item_id": 13348,
+        "artist_id": "f319b57a-a494-40f6-a467-3d196d3484e6",
+        "artist": "Sparks",
+        "track_id": "3a542a24-2c2b-4b04-b57f-cfd89e9c3626",
+        "title": "The Number One Song In Heaven",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 4294,
+        "item_id": 4530,
+        "artist_id": "b5a6b147-ff97-4f12-928b-25588d20e2b0",
+        "artist": "Telex",
+        "track_id": "664353bc-3f89-4cb2-9969-245c824598ff",
+        "title": "Moskow Diskow",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 18006,
+        "item_id": 18684,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "35716717-78b5-4eb4-b2ce-04d30b742c3e",
+        "title": "Leave My Kitten Alone",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 23723,
+        "item_id": 24233,
+        "artist_id": "a992aada-7108-455d-9747-0b7b6a089e8d",
+        "artist": "Joaquín Sabina",
+        "track_id": "14ea8701-e073-4e1c-8bdf-e6bc6377fdf5",
+        "title": "Juana La Loca",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 18074,
+        "item_id": 14826,
+        "artist_id": "42a8f507-8412-4611-854f-926571049fa0",
+        "artist": "George Harrison",
+        "track_id": "2ac6efd5-f1d3-4ade-8434-bbe3e3c7cd34",
+        "title": "What Is Life",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 18148,
+        "item_id": 18647,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "7b79f719-25f6-43c5-ba11-c49e6c18cbb4",
+        "title": "Yes It Is",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 906,
+        "item_id": 977,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "a3fadf84-6967-486b-a8a7-b45ba7c7bdc2",
+        "title": "Help!",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5344,
+        "item_id": 5427,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "cf9719f5-d154-4460-82ef-0da66248f48d",
+        "title": "Sgt. Peppers Lonely Hearts Club Band",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 13490,
+        "item_id": 13965,
+        "artist_id": "7adaabfb-acfb-47bc-8c7c-59471c2f0db8",
+        "artist": "The Human League",
+        "track_id": "baa793ac-b478-4bee-84a5-3dad539e2deb",
+        "title": "Seconds",
+        "matched_anchors": 3
+      }
+    ],
+    "recent": [
+      {
+        "item_idx": 20383,
+        "item_id": 20923,
+        "artist_id": "c8524763-e7d7-4225-8a9a-e7b64db5a1e2",
+        "artist": "Chemistry",
+        "track_id": "7153251e-1f92-475a-830d-f73caf357c8f",
+        "title": "It Takes Two",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 20384,
+        "item_id": 20951,
+        "artist_id": "c8524763-e7d7-4225-8a9a-e7b64db5a1e2",
+        "artist": "Chemistry",
+        "track_id": "94c975bb-bb9c-4589-8ebb-fd2216264341",
+        "title": "Solid Dream",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 20379,
+        "item_id": 20916,
+        "artist_id": "c8524763-e7d7-4225-8a9a-e7b64db5a1e2",
+        "artist": "Chemistry",
+        "track_id": "f698e10c-cf13-4fb2-a32f-c34b79e35705",
+        "title": "Wings Of Words (Instrumental)",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 20402,
+        "item_id": 20924,
+        "artist_id": "c8524763-e7d7-4225-8a9a-e7b64db5a1e2",
+        "artist": "Chemistry",
+        "track_id": "2e27fc8a-8edf-4d49-83c9-1ed1544dca03",
+        "title": "Grind For Me",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 20377,
+        "item_id": 20936,
+        "artist_id": "c8524763-e7d7-4225-8a9a-e7b64db5a1e2",
+        "artist": "Chemistry",
+        "track_id": "2141d3b8-bc45-467c-b12a-62a48c122a52",
+        "title": "Almost In Love",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 20385,
+        "item_id": 20928,
+        "artist_id": "7dea80e3-0861-4c9c-86df-eec42fc2c5a8",
+        "artist": "T.M.Revolution",
+        "track_id": "9ea224bd-2e85-4c0d-9157-e6ad091706a6",
+        "title": "Invoke -インヴォーク-",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 20430,
+        "item_id": 20909,
+        "artist_id": "c8524763-e7d7-4225-8a9a-e7b64db5a1e2",
+        "artist": "Chemistry",
+        "track_id": "5d56916d-3f14-4b94-971b-f8f8a31e40e7",
+        "title": "空の奇跡",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 20381,
+        "item_id": 20935,
+        "artist_id": "c8524763-e7d7-4225-8a9a-e7b64db5a1e2",
+        "artist": "Chemistry",
+        "track_id": "09df5459-c623-4d3d-8416-cdb7458194df",
+        "title": "Pieces Of A Dream",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 20424,
+        "item_id": 20962,
+        "artist_id": "0751eb2b-78b6-4b1d-9481-41e83189e3b3",
+        "artist": "Manna",
+        "track_id": "91363146-9683-4fd7-84de-f01e716d3742",
+        "title": "でてこいとびきりZenkaiパワー!",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 20408,
+        "item_id": 20955,
+        "artist_id": "c8524763-e7d7-4225-8a9a-e7b64db5a1e2",
+        "artist": "Chemistry",
+        "track_id": "74eb13cc-1fbf-44d7-b96c-4a98916ce264",
+        "title": "伝説の草原 (Patrick Stump Remix)",
+        "matched_anchors": 3
+      }
+    ],
+    "history": [
+      {
+        "item_idx": 5975,
+        "item_id": 6855,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "0e04d324-4710-422e-8a4a-1d7362caa5ad",
+        "title": "I Saw Her Standing There",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5603,
+        "item_id": 6854,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "59b38ba7-ad30-4dfe-ba41-3d8ee4348c18",
+        "title": "Anna (Go To Him)",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 904,
+        "item_id": 979,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "75a8a053-bffb-4464-bf71-ac9a603b33f9",
+        "title": "I Feel Fine",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5600,
+        "item_id": 6856,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "b3c37580-789c-42d4-a906-ee0cf5cf4649",
+        "title": "Do You Want To Know A Secret",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5977,
+        "item_id": 6844,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "d9944f08-0291-4939-9630-65f0ae8657ae",
+        "title": "Ask Me Why",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5603,
+        "item_id": 6854,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "59b38ba7-ad30-4dfe-ba41-3d8ee4348c18",
+        "title": "Anna (Go To Him)",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5977,
+        "item_id": 6844,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "d9944f08-0291-4939-9630-65f0ae8657ae",
+        "title": "Ask Me Why",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5975,
+        "item_id": 6855,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "0e04d324-4710-422e-8a4a-1d7362caa5ad",
+        "title": "I Saw Her Standing There",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5600,
+        "item_id": 6856,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "b3c37580-789c-42d4-a906-ee0cf5cf4649",
+        "title": "Do You Want To Know A Secret",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 904,
+        "item_id": 979,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "75a8a053-bffb-4464-bf71-ac9a603b33f9",
+        "title": "I Feel Fine",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5976,
+        "item_id": 6780,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "6b2595ad-b05f-44bd-b518-42ce5e9f7970",
+        "title": "It Won'T Be Long",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 904,
+        "item_id": 979,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "75a8a053-bffb-4464-bf71-ac9a603b33f9",
+        "title": "I Feel Fine",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 2854,
+        "item_id": 2640,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "706be20f-e062-4569-94cc-25842dc0a625",
+        "title": "Roll Over Beethoven",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5661,
+        "item_id": 6947,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "bc9fa5d4-800e-452e-831e-b648a9ed5a12",
+        "title": "I'M Happy Just To Dance With You",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5975,
+        "item_id": 6855,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "0e04d324-4710-422e-8a4a-1d7362caa5ad",
+        "title": "I Saw Her Standing There",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5981,
+        "item_id": 6760,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "3517f3b7-6954-4635-8d64-5f37152d50f8",
+        "title": "I Wanna Be Your Man",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5603,
+        "item_id": 6854,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "59b38ba7-ad30-4dfe-ba41-3d8ee4348c18",
+        "title": "Anna (Go To Him)",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5976,
+        "item_id": 6780,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "6b2595ad-b05f-44bd-b518-42ce5e9f7970",
+        "title": "It Won'T Be Long",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5981,
+        "item_id": 6760,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "3517f3b7-6954-4635-8d64-5f37152d50f8",
+        "title": "I Wanna Be Your Man",
+        "matched_anchors": 3
+      },
+      {
+        "item_idx": 5603,
+        "item_id": 6854,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "59b38ba7-ad30-4dfe-ba41-3d8ee4348c18",
+        "title": "Anna (Go To Him)",
+        "matched_anchors": 3
+      }
+    ],
+    "removed": [
+      {
+        "position": 4,
+        "item_idx": 5600,
+        "item_id": 6856,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "b3c37580-789c-42d4-a906-ee0cf5cf4649",
+        "title": "Do You Want To Know A Secret",
+        "matched_anchors": 3
+      },
+      {
+        "position": 5,
+        "item_idx": 5977,
+        "item_id": 6844,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "d9944f08-0291-4939-9630-65f0ae8657ae",
+        "title": "Ask Me Why",
+        "matched_anchors": 3
+      },
+      {
+        "position": 7,
+        "item_idx": 5977,
+        "item_id": 6844,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "d9944f08-0291-4939-9630-65f0ae8657ae",
+        "title": "Ask Me Why",
+        "matched_anchors": 3
+      },
+      {
+        "position": 9,
+        "item_idx": 5600,
+        "item_id": 6856,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "b3c37580-789c-42d4-a906-ee0cf5cf4649",
+        "title": "Do You Want To Know A Secret",
+        "matched_anchors": 3
+      },
+      {
+        "position": 17,
+        "item_idx": 5603,
+        "item_id": 6854,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "59b38ba7-ad30-4dfe-ba41-3d8ee4348c18",
+        "title": "Anna (Go To Him)",
+        "matched_anchors": 3
+      },
+      {
+        "position": 20,
+        "item_idx": 5603,
+        "item_id": 6854,
+        "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+        "artist": "The Beatles",
+        "track_id": "59b38ba7-ad30-4dfe-ba41-3d8ee4348c18",
+        "title": "Anna (Go To Him)",
+        "matched_anchors": 3
+      }
+    ],
+    "inserted": [
+      {
+        "position": 15,
+        "item_idx": 19706,
+        "item_id": 20227,
+        "artist_id": "d5801255-236d-455f-8de0-17c4a7ed5483",
+        "artist": "David Guetta & Chris Willis",
+        "track_id": "ea58d356-8504-4858-91cb-786893d74bdb",
+        "title": "Tomorrow Can Wait (Radio Edit)",
+        "matched_anchors": 3
+      },
+      {
+        "position": 16,
+        "item_idx": 22904,
+        "item_id": 23416,
+        "artist_id": "80d1d7e0-fdab-4009-8375-54bd63d74c0e",
+        "artist": "Yui",
+        "track_id": "30857363-50e8-46b8-a611-b66b7c4b2b4c",
+        "title": "Che.R.Ry",
+        "matched_anchors": 3
+      },
+      {
+        "position": 17,
+        "item_idx": 29068,
+        "item_id": 29401,
+        "artist_id": "0580c1de-0218-42d1-bd2c-bcb45f72e66b",
+        "artist": "Los Fastidios",
+        "track_id": "ca0763ad-5b65-4d2c-99a3-09340a01d4ed",
+        "title": "Rudy Rude Boy",
+        "matched_anchors": 3
+      },
+      {
+        "position": 18,
+        "item_idx": 22905,
+        "item_id": 23415,
+        "artist_id": "80d1d7e0-fdab-4009-8375-54bd63d74c0e",
+        "artist": "Yui",
+        "track_id": "9b822da6-2ec0-44f2-a473-a539eb418469",
+        "title": "I Remember You",
+        "matched_anchors": 3
+      },
+      {
+        "position": 19,
+        "item_idx": 26038,
+        "item_id": 26520,
+        "artist_id": "2171e02c-e6c5-4109-85b7-ce4f13576a36",
+        "artist": "Nigel Kennedy",
+        "track_id": "2c5c4843-04d5-41ab-8bfa-964b247b3fc2",
+        "title": "Air On The G String (J S Bach)",
+        "matched_anchors": 3
+      },
+      {
+        "position": 20,
+        "item_idx": 20383,
+        "item_id": 20923,
+        "artist_id": "c8524763-e7d7-4225-8a9a-e7b64db5a1e2",
+        "artist": "Chemistry",
+        "track_id": "7153251e-1f92-475a-830d-f73caf357c8f",
+        "title": "It Takes Two",
+        "matched_anchors": 3
+      }
+    ]
+  }
+]
