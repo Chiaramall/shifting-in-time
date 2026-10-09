@@ -66,11 +66,6 @@ python experiments/catalog_robustness.py \
   --output-dir results/catalog/lastfm1k --device cuda
 ```
 
-`checkpoint.pt` contains the validation-selected weights. `last.pt` contains the
-latest optimizer and random-generator state for resuming training. Evaluation
-requires the training `SUCCESS` marker. Repeating the training command resumes
-from `last.pt`; use a new output directory after changing data or parameters.
-Checkpoints from the earlier final-epoch pipeline are not accepted.
 
 For all nine models on both datasets:
 
@@ -97,12 +92,6 @@ For CPU execution, set `general.device: cpu` in the YAML files and use
 - `experiments/`: training, perturbation, reporting, and regression tests.
 - `warprec/`: shared data, training, and evaluation infrastructure.
 
-```bash
-python -m unittest discover -s experiments -p 'test_*.py'
-```
 
-The tests check temporal replacement, FRBO, validation splits, checkpoint
-selection, resume behavior, and training objectives. Full experiments with these
-updated configurations have not been rerun to verify the paper's numerical
-results. The supplied hyperparameters are fixed configurations; this repository
-does not reconstruct the preliminary hyperparameter search.
+
+
