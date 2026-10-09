@@ -5,10 +5,10 @@ changes sequential recommendations. Evaluation keeps model parameters fixed and
 compares original and perturbed Top-10 rankings with **FRBO@10** (`p = 0.9`) and
 **nDCG@10**.
 
-This repository contains the nine models evaluated on **LastFM-1K** and
-**MovieLens-10M**: SASRec, BERT4Rec, gSASRec, GRU4Rec, LightSANs, DuoRec,
-CL4SRec, eSASRec, and BSARec. All supplied configurations use
-**`max_seq_len: 20`**. 
+This repository contains the nine models evaluated on LastFM-1K and
+MovieLens-10M: SASRec, BERT4Rec, gSASRec, GRU4Rec, LightSANs, DuoRec,
+CL4SRec, eSASRec, and BSARec. All models are trained using the **[WarpRec framework](https://arxiv.org/abs/2602.1744)**, with supplied configurations using max_seq_len: 20. Model
+parameters are kept fixed during the subsequent temporal perturbation experiments.
 
 ## Installation
 
