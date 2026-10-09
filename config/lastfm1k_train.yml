@@ -14,10 +14,13 @@ reader:
     user_id_type: str
     item_id_type: str
     rating_type: float32
-    timestamp_type: float32
+    timestamp_type: int64
   header: true
 splitter:
   test_splitting:
+    strategy: temporal_holdout
+    ratio: 0.1
+  validation_splitting:
     strategy: temporal_holdout
     ratio: 0.1
 models:

@@ -1,16 +1,15 @@
-
 # pylint: disable = R0801, E1102, W0221, C0103, W0613, W0235, R0902
-from typing import Callable, Any, Optional
+from typing import Any, Callable, Optional
 
 import torch
-from torch import nn, Tensor
+from torch import Tensor, nn
 
+from warprec.data.entities import Interactions, Sessions
 from warprec.recommenders.base_recommender import (
     IterativeRecommender,
     SequentialRecommenderUtils,
 )
 from warprec.recommenders.losses import EmbLoss
-from warprec.data.entities import Interactions, Sessions
 from warprec.utils.enums import DataLoaderType
 from warprec.utils.registry import model_registry
 
@@ -79,7 +78,7 @@ class gSASRec(IterativeRecommender, SequentialRecommenderUtils):
         **kwargs: Any,
     ):
         super().__init__(params, interactions, info, *args, seed=seed, **kwargs)
-        self.corrected_training = bool(params.get('corrected_training', False))
+        self.corrected_training = bool(params.get("corrected_training", False))
 
         self.item_embedding = nn.Embedding(
             self.n_items + 1, self.embedding_size, padding_idx=self.n_items
@@ -172,7 +171,7 @@ class gSASRec(IterativeRecommender, SequentialRecommenderUtils):
 
     def _gbce_loss_function(self) -> Callable:
         """Return the General Binary Cross-Entropy (GBCE) loss.
-        
+
         Uses a numerically stable formulation based on logsumexp to avoid
         overflow/underflow issues with large negative samples and temperature scaling.
 
@@ -196,11 +195,14 @@ class gSASRec(IterativeRecommender, SequentialRecommenderUtils):
 
             if self.corrected_training:
                 from models.corrected_objectives import calibrated_bce
-                return calibrated_bce(logits,labels!=self.n_items,self.n_items,self.gbce_t)
+
+                return calibrated_bce(
+                    logits, labels != self.n_items, self.n_items, self.gbce_t
+                )
 
             # Separate positive and negative logits
             pos_logits = logits[:, :, 0:1]  # [batch_size, seq_len, 1]
-            neg_logits = logits[:, :, 1:]   # [batch_size, seq_len, neg_samples]
+            neg_logits = logits[:, :, 1:]  # [batch_size, seq_len, neg_samples]
 
             # Create mask for valid targets
             mask = (labels != self.n_items).float()  # [batch_size, seq_len]
@@ -208,26 +210,27 @@ class gSASRec(IterativeRecommender, SequentialRecommenderUtils):
             # Numerically stable GBCE loss using logsumexp
             # Loss = log(1 + sum_i(exp(neg_i - pos)))
             # = logsumexp([0, neg_1 - pos, neg_2 - pos, ...])
-            
+
             # Compute relative logits
             diff = neg_logits - pos_logits  # [batch_size, seq_len, neg_samples]
-            
+
             # Stack zero (for the positive) and differences (for negatives)
             combined = torch.cat(
-                [torch.zeros_like(pos_logits), diff], 
-                dim=-1
+                [torch.zeros_like(pos_logits), diff], dim=-1
             )  # [batch_size, seq_len, neg_samples + 1]
-            
+
             # Compute logsumexp along negative dimension (dimension -1)
             # This is numerically stable and handles both large and small values
-            loss_per_position = torch.logsumexp(combined, dim=-1)  # [batch_size, seq_len]
-            
+            loss_per_position = torch.logsumexp(
+                combined, dim=-1
+            )  # [batch_size, seq_len]
+
             # Apply mask to ignore padding
             loss_per_position = loss_per_position * mask
-            
+
             # Average loss: sum across seq and batch, normalize by valid positions
             total_loss = loss_per_position.sum() / mask.sum().clamp(min=1)
-            
+
             return total_loss
 
         return gbce_loss_fn

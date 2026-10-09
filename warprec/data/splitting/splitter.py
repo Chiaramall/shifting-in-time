@@ -137,6 +137,7 @@ class Splitter:
         if len(validation_folds) == 1:
             # CASE 2: Train/Validation/Test
             train_set, validation_set = validation_folds[0]
+            self.filter_sets(train_set, validation_set)
             self.filter_sets(train_set, test_set)
             return (train_set, validation_set, test_set)
 

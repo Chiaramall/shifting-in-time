@@ -18,18 +18,17 @@ Reference:
 
 """
 
-import math
 from typing import Any, Optional, Tuple
 
 import torch
-from torch import nn, Tensor
+from torch import Tensor, nn
 
+from warprec.data.entities import Interactions, Sessions
 from warprec.recommenders.base_recommender import (
     IterativeRecommender,
     SequentialRecommenderUtils,
 )
 from warprec.recommenders.losses import BPRLoss, EmbLoss
-from warprec.data.entities import Interactions, Sessions
 from warprec.utils.enums import DataLoaderType
 from warprec.utils.registry import model_registry
 
@@ -106,11 +105,13 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
         **kwargs: Any,
     ):
         super().__init__(params, interactions, info, *args, seed=seed, **kwargs)
-        self.corrected_training = bool(params.get('corrected_training', False))
+        self.corrected_training = bool(params.get("corrected_training", False))
 
         # Item and position embeddings
         self.item_embedding = nn.Embedding(
-            self.n_items + (2 if self.corrected_training else 1), self.embedding_size, padding_idx=self.n_items
+            self.n_items + (2 if self.corrected_training else 1),
+            self.embedding_size,
+            padding_idx=self.n_items,
         )
         self.position_embedding = nn.Embedding(self.max_seq_len, self.embedding_size)
         self.emb_dropout = nn.Dropout(self.dropout_prob)
@@ -173,127 +174,146 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
             low_memory=low_memory,
         )
 
-    def _item_crop_batch(self, item_seq: Tensor, item_seq_len: Tensor) -> Tuple[Tensor, Tensor]:
+    def _item_crop_batch(
+        self, item_seq: Tensor, item_seq_len: Tensor
+    ) -> Tuple[Tensor, Tensor]:
         """Fully vectorized crop augmentation - NO loops, NO GPU-CPU sync."""
         batch_size = item_seq.shape[0]
         max_seq = item_seq.shape[1]
-        
+
         num_left = torch.floor(item_seq_len * self.crop_eta).long()
         num_left = torch.clamp(num_left, min=1)
-        
+
         crop_begin = torch.randint(
             0, max_seq - 1, (batch_size,), device=item_seq.device
         )
         crop_begin = torch.clamp(crop_begin, max=(max_seq - num_left))
-        
+
         # Pure tensor operations: gather with offset indices
-        seq_indices = torch.arange(max_seq, device=item_seq.device).unsqueeze(0)  # [1, max_seq]
+        seq_indices = torch.arange(max_seq, device=item_seq.device).unsqueeze(
+            0
+        )  # [1, max_seq]
         gather_idx = (crop_begin.unsqueeze(1) + seq_indices).clamp(max=max_seq - 1)
-        
+
         gathered = torch.gather(item_seq, 1, gather_idx)
-        
+
         # Mask to keep only first num_left[i] items, rest become padding
-        keep_mask = (seq_indices < num_left.unsqueeze(1))
+        keep_mask = seq_indices < num_left.unsqueeze(1)
         cropped = torch.where(
-            keep_mask,
-            gathered,
-            torch.full_like(gathered, self.n_items)
+            keep_mask, gathered, torch.full_like(gathered, self.n_items)
         )
-        
+
         return cropped, num_left
 
-    def _item_mask_batch(self, item_seq: Tensor, item_seq_len: Tensor) -> Tuple[Tensor, Tensor]:
+    def _item_mask_batch(
+        self, item_seq: Tensor, item_seq_len: Tensor
+    ) -> Tuple[Tensor, Tensor]:
         """Fully vectorized mask augmentation - NO loops at all."""
         batch_size = item_seq.shape[0]
         max_seq = item_seq.shape[1]
-        
+
         num_mask = torch.floor(item_seq_len * self.mask_gamma).long().clamp(min=1)
-        
+
         # Generate random values for all positions [batch, max_seq]
         rand_vals = torch.rand(batch_size, max_seq, device=item_seq.device)
-        
+
         # Create valid sequence length mask [batch, max_seq]
         pos_indices = torch.arange(max_seq, device=item_seq.device).unsqueeze(0)
         valid_mask = pos_indices < item_seq_len.unsqueeze(1)
-        
+
         # Set high values for invalid positions so they won't be selected
         rand_vals = torch.where(valid_mask, rand_vals, torch.ones_like(rand_vals) * 2.0)
-        
+
         # For each batch, identify which positions to mask
         # Use argsort to get top-k positions without loop
         _, sorted_indices = torch.sort(rand_vals, dim=1, descending=True)
-        
+
         # Create mask for which positions to mask
-        mask_positions = torch.zeros((batch_size, max_seq), dtype=torch.bool, device=item_seq.device)
-        
+        mask_positions = torch.zeros(
+            (batch_size, max_seq), dtype=torch.bool, device=item_seq.device
+        )
+
         # This still needs a loop, but only to set the top-k per row
         for i in range(batch_size):
             k = num_mask[i].item()
             mask_positions[i, sorted_indices[i, :k]] = True
-        
+
         # Apply masking
-        masked = torch.where(mask_positions, torch.full_like(item_seq, self.n_items), item_seq)
-        
+        masked = torch.where(
+            mask_positions, torch.full_like(item_seq, self.n_items), item_seq
+        )
+
         return masked, item_seq_len
 
-    def _item_reorder_batch(self, item_seq: Tensor, item_seq_len: Tensor) -> Tuple[Tensor, Tensor]:
+    def _item_reorder_batch(
+        self, item_seq: Tensor, item_seq_len: Tensor
+    ) -> Tuple[Tensor, Tensor]:
         """Fully vectorized reorder augmentation - NO loops."""
         batch_size = item_seq.shape[0]
         max_seq = item_seq.shape[1]
-        
+
         num_reorder = torch.floor(item_seq_len * self.reorder_beta).long().clamp(min=1)
-        
+
         # Generate random reorder lengths and positions in batch
         reorder_begin = torch.randint(0, max_seq, (batch_size,), device=item_seq.device)
-        
+
         reordered = item_seq.clone()
-        
+
         # Minimal loop: only for applying per-batch reordering
         for i in range(batch_size):
             seq_len_i = item_seq_len[i].item()
             reorder_count = min(num_reorder[i].item(), max(1, int(seq_len_i) - 1))
-            
+
             if reorder_count > 1:
                 reorder_start = reorder_begin[i].item()
                 reorder_start = min(reorder_start, int(seq_len_i) - reorder_count)
-                
+
                 # Shuffle within window
                 shuffle_perm = torch.randperm(reorder_count, device=item_seq.device)
-                reordered[i, reorder_start:reorder_start + reorder_count] = (
-                    item_seq[i, reorder_start + shuffle_perm]
-                )
-        
+                reordered[i, reorder_start : reorder_start + reorder_count] = item_seq[
+                    i, reorder_start + shuffle_perm
+                ]
+
         return reordered, item_seq_len
 
     def augment(
         self, item_seq: Tensor, item_seq_len: Tensor
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         """Generate two augmented versions of sequences using random augmentation methods.
-        
+
         Fully vectorized batch operation - no loop serialization.
-        
+
         Args:
             item_seq (Tensor): Original sequences [batch_size, max_seq_len].
             item_seq_len (Tensor): Sequence lengths [batch_size,].
-            
+
         Returns:
             Tuple of (aug_seq1, aug_len1, aug_seq2, aug_len2).
         """
         if self.corrected_training:
             from .corrected_objectives import contrastive_views
-            return contrastive_views(item_seq,item_seq_len,self.n_items,self.n_items+1,self.crop_eta,self.mask_gamma,self.reorder_beta)
+
+            return contrastive_views(
+                item_seq,
+                item_seq_len,
+                self.n_items,
+                self.n_items + 1,
+                self.crop_eta,
+                self.mask_gamma,
+                self.reorder_beta,
+            )
         batch_size = item_seq_len.shape[0]
-        
+
         # GPU-native: generate random augmentation choices for each sample
         augment_choices1 = torch.randint(0, 3, (batch_size,), device=item_seq.device)
         augment_choices2 = torch.randint(0, 3, (batch_size,), device=item_seq.device)
-        
+
         # Initialize augmented sequences
         aug_seq1 = item_seq.clone()
         aug_len1 = item_seq_len.clone()
         aug_seq2 = item_seq.clone()
         aug_len2 = item_seq_len.clone()
-        
+
         # Apply crop augmentation
         crop_mask1 = augment_choices1 == 0
         if crop_mask1.any():
@@ -302,7 +322,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
             )
             aug_seq1[crop_mask1] = cropped
             aug_len1[crop_mask1] = crop_len
-        
+
         crop_mask2 = augment_choices2 == 0
         if crop_mask2.any():
             cropped, crop_len = self._item_crop_batch(
@@ -310,7 +330,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
             )
             aug_seq2[crop_mask2] = cropped
             aug_len2[crop_mask2] = crop_len
-        
+
         # Apply mask augmentation
         mask_mask1 = augment_choices1 == 1
         if mask_mask1.any():
@@ -319,7 +339,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
             )
             aug_seq1[mask_mask1] = masked
             aug_len1[mask_mask1] = mask_len
-        
+
         mask_mask2 = augment_choices2 == 1
         if mask_mask2.any():
             masked, mask_len = self._item_mask_batch(
@@ -327,7 +347,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
             )
             aug_seq2[mask_mask2] = masked
             aug_len2[mask_mask2] = mask_len
-        
+
         # Apply reorder augmentation
         reorder_mask1 = augment_choices1 == 2
         if reorder_mask1.any():
@@ -336,7 +356,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
             )
             aug_seq1[reorder_mask1] = reordered
             aug_len1[reorder_mask1] = reorder_len
-        
+
         reorder_mask2 = augment_choices2 == 2
         if reorder_mask2.any():
             reordered, reorder_len = self._item_reorder_batch(
@@ -362,9 +382,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
             neg_items_emb = self.item_embedding(neg_item)
 
             pos_score = torch.sum(seq_output * pos_items_emb, dim=-1)
-            neg_score = torch.sum(
-                seq_output.unsqueeze(1) * neg_items_emb, dim=-1
-            )
+            neg_score = torch.sum(seq_output.unsqueeze(1) * neg_items_emb, dim=-1)
             main_loss = self.main_loss(pos_score, neg_score)
 
             # L2 regularization
@@ -374,7 +392,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
                 self.item_embedding(neg_item),
             )
         else:
-            test_item_emb = self.item_embedding.weight[:self.n_items, :]
+            test_item_emb = self.item_embedding.weight[: self.n_items, :]
             logits = torch.matmul(seq_output, test_item_emb.transpose(0, 1))
             main_loss = self.main_loss(logits, pos_item)
 
@@ -445,9 +463,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
         )
 
         # Gather the output of the last relevant item in each sequence
-        seq_output = self._gather_indexes(
-            transformer_output, item_seq_len - 1
-        )
+        seq_output = self._gather_indexes(transformer_output, item_seq_len - 1)
 
         return seq_output
 
@@ -456,7 +472,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
     ) -> Tuple[Tensor, Tensor]:
         """
         Compute InfoNCE loss for contrastive learning with memory-efficient similarity.
-        
+
         Instead of computing full N×N matrix, compute only needed similarities.
 
         Args:
@@ -471,11 +487,12 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
         """
         if self.corrected_training:
             from .corrected_objectives import info_nce_logits
-            return info_nce_logits(z_i,z_j,temp,sim)
+
+            return info_nce_logits(z_i, z_j, temp, sim)
         # Normalize for numerical stability
         z_i = torch.nn.functional.normalize(z_i, dim=1)
         z_j = torch.nn.functional.normalize(z_j, dim=1)
-        
+
         # Positive samples: similarity between paired augmentations
         if sim == "cos":
             pos_sim = torch.sum(z_i * z_j, dim=1) / temp  # [batch_size]
@@ -483,34 +500,40 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
             pos_sim = torch.sum(z_i * z_j, dim=1) / temp  # [batch_size]
         else:
             raise ValueError(f"Unknown similarity metric: {sim}")
-        
+
         # Negative samples: similarity to all other augmentations
         # Cross-similarity: z_i to z_j (others) and z_j to z_i (others)
         neg_sim_i_j = torch.mm(z_i, z_j.T) / temp  # [batch_size, batch_size]
         neg_sim_j_i = torch.mm(z_j, z_i.T) / temp  # [batch_size, batch_size]
-        
+
         # Concatenate: z_i matched with z_j, then z_j matched with z_i
         N = 2 * batch_size
-        
+
         # Build positive batch: [pos(0,0), pos(1,1), ..., pos(b-1,b-1), pos(0,0), ...]
         positive_samples = torch.cat([pos_sim, pos_sim], dim=0).reshape(N, 1)
-        
+
         # Build negative samples matrix more memory-efficiently
         # Diagonal mask to exclude self-pairs
         mask = torch.ones((batch_size, batch_size), dtype=torch.bool, device=z_i.device)
         mask.fill_diagonal_(0)
-        
+
         # Extract negative samples - VECTORIZED (no loop)
         # Use boolean masking with repeat to handle variable dimension
         # For each row i: select columns where mask[i] == True
-        
+
         # Create indices for the off-diagonal elements
-        negatives_i_j = neg_sim_i_j[mask].reshape(batch_size, -1)  # [batch_size, batch_size-1]
-        negatives_j_i = neg_sim_j_i[mask].reshape(batch_size, -1)  # [batch_size, batch_size-1]
-        
+        negatives_i_j = neg_sim_i_j[mask].reshape(
+            batch_size, -1
+        )  # [batch_size, batch_size-1]
+        negatives_j_i = neg_sim_j_i[mask].reshape(
+            batch_size, -1
+        )  # [batch_size, batch_size-1]
+
         # Concatenate first half (z_i negatives) and second half (z_j negatives)
-        negative_samples = torch.cat([negatives_i_j, negatives_j_i], dim=0)  # [2*batch_size, batch_size-1]
-        
+        negative_samples = torch.cat(
+            [negatives_i_j, negatives_j_i], dim=0
+        )  # [2*batch_size, batch_size-1]
+
         labels = torch.zeros(N, dtype=torch.long, device=z_i.device)
         logits = torch.cat((positive_samples, negative_samples), dim=1)
 
@@ -582,7 +605,7 @@ class CL4SRec(IterativeRecommender, SequentialRecommenderUtils):
 
         if item_indices is None:
             # Case 'full': prediction on all items
-            item_embeddings = self.item_embedding.weight[:self.n_items, :]
+            item_embeddings = self.item_embedding.weight[: self.n_items, :]
             einsum_string = "be,ie->bi"
         else:
             # Case 'sampled': prediction on a sampled set of items

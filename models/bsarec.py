@@ -5,12 +5,12 @@ BSARec - Bandlimited Self-Attention for Sequential Recommendation
 ##################################################################
 
 Reference:
-    "BSARec: Beyond Self-Attention with Frequency Filtering" 
-    
+    "BSARec: Beyond Self-Attention with Frequency Filtering"
+
     Combines two complementary patterns:
     1. Domain-Specific Patterns (DSP): Frequency-based filtering using FFT
     2. Graph-Space Patterns (GSP): Multi-head self-attention
-    
+
     The model learns an optimal combination via learnable parameter alpha.
 
 Key Features:
@@ -23,15 +23,14 @@ Key Features:
 from typing import Any, Optional
 
 import torch
-import torch.nn.functional as F
-from torch import nn, Tensor
+from torch import Tensor, nn
 
+from warprec.data.entities import Interactions, Sessions
 from warprec.recommenders.base_recommender import (
     IterativeRecommender,
     SequentialRecommenderUtils,
 )
 from warprec.recommenders.losses import BPRLoss, EmbLoss
-from warprec.data.entities import Interactions, Sessions
 from warprec.utils.enums import DataLoaderType
 from warprec.utils.registry import model_registry
 
@@ -366,7 +365,6 @@ class BSARecBlock(nn.Module):
 
         # Graph-Space Patterns (GSP): Multi-head attention
         # Create attention mask: padding positions should be masked
-        attn_mask = None
         if padding_mask is not None:
             # Convert boolean mask to attention mask
             # True means mask (ignore), so we invert it
@@ -436,7 +434,7 @@ class FrequencyLayer(nn.Module):
 
         # Combine with learnable scaling
         # sqrt_beta^2 controls contribution of high-frequency components
-        sequence_emb_fft = low_pass + (self.sqrt_beta ** 2) * high_pass
+        sequence_emb_fft = low_pass + (self.sqrt_beta**2) * high_pass
 
         output = self.dropout(sequence_emb_fft)
         return output

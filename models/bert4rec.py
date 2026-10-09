@@ -2,14 +2,14 @@
 from typing import Any, Optional
 
 import torch
-from torch import nn, Tensor
+from torch import Tensor, nn
 
+from warprec.data.entities import Interactions, Sessions
 from warprec.recommenders.base_recommender import (
     IterativeRecommender,
     SequentialRecommenderUtils,
 )
 from warprec.recommenders.losses import BPRLoss, EmbLoss
-from warprec.data.entities import Interactions, Sessions
 from warprec.utils.enums import DataLoaderType
 from warprec.utils.registry import model_registry
 
@@ -79,7 +79,7 @@ class BERT4Rec(IterativeRecommender, SequentialRecommenderUtils):
         **kwargs: Any,
     ):
         super().__init__(params, interactions, info, *args, seed=seed, **kwargs)
-        self.corrected_training = bool(params.get('corrected_training', False))
+        self.corrected_training = bool(params.get("corrected_training", False))
 
         # Define special token IDs
         self.padding_token_id = self.n_items
@@ -144,9 +144,14 @@ class BERT4Rec(IterativeRecommender, SequentialRecommenderUtils):
 
         if self.corrected_training:
             valid = pos_items != self.padding_token_id
-            logits = seq_output[valid] @ self.item_embedding.weight[:self.n_items].T + self.out_bias[:self.n_items]
-            loss = torch.nn.functional.cross_entropy(logits,pos_items[valid])
-            return loss+self.reg_weight*self.reg_loss(self.item_embedding(masked_seq))
+            logits = (
+                seq_output[valid] @ self.item_embedding.weight[: self.n_items].T
+                + self.out_bias[: self.n_items]
+            )
+            loss = torch.nn.functional.cross_entropy(logits, pos_items[valid])
+            return loss + self.reg_weight * self.reg_loss(
+                self.item_embedding(masked_seq)
+            )
 
         # Get embeddings for positive and negative items
         pos_items_emb = self.item_embedding(pos_items)

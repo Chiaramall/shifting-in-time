@@ -1,15 +1,22 @@
 """Shared checkpoint loading and full-catalogue inference helpers."""
+
 from __future__ import annotations
-import json, math
+
+import json
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
+
 import numpy as np
 import torch
+
 from warprec.utils.registry import model_registry
+
 
 def padding_side_for_model(model):
     return "right"
+
 
 @dataclass(frozen=True)
 class RankingResult:
@@ -44,7 +51,9 @@ def padded_sequences(
     return tensor, torch.tensor(lengths, dtype=torch.long)
 
 
-def ranking_metrics(top_items: Iterable[int], positives: set[int], k: int) -> tuple[float, float]:
+def ranking_metrics(
+    top_items: Iterable[int], positives: set[int], k: int
+) -> tuple[float, float]:
     """Compute binary nDCG@k and Recall@k for one user."""
     top_items = list(top_items)[:k]
     if not positives:
@@ -81,7 +90,9 @@ def resolve_checkpoint(path_value: str | None) -> Path | None:
     return path
 
 
-def load_model_params(config_params: dict, checkpoint_path: Path | None, checkpoint: dict | None = None) -> dict:
+def load_model_params(
+    config_params: dict, checkpoint_path: Path | None, checkpoint: dict | None = None
+) -> dict:
     """Prefer Ray Tune params.json when available, otherwise use concrete config values."""
     if checkpoint is not None and checkpoint.get("params"):
         return checkpoint["params"]
@@ -105,7 +116,9 @@ def load_model_params(config_params: dict, checkpoint_path: Path | None, checkpo
     return params
 
 
-def load_model(model_name: str, model_config: dict, dataset, device: torch.device, strict: bool):
+def load_model(
+    model_name: str, model_config: dict, dataset, device: torch.device, strict: bool
+):
     """Instantiate a model and load the checkpoint configured for it."""
     checkpoint_path = resolve_checkpoint(model_config.get("meta", {}).get("load_from"))
     if checkpoint_path is None or not checkpoint_path.is_file():
@@ -115,13 +128,30 @@ def load_model(model_name: str, model_config: dict, dataset, device: torch.devic
 
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
     checkpoint_dict = checkpoint if isinstance(checkpoint, dict) else None
+    if (
+        checkpoint_dict is None
+        or checkpoint_dict.get("checkpoint_selection") != "validation_ndcg10"
+        or not checkpoint_dict.get("full_epoch")
+    ):
+        raise ValueError(
+            "Expected a completed validation-selected checkpoint; retrain with the current pipeline"
+        )
     params = load_model_params(model_config, checkpoint_path, checkpoint_dict)
-    info = checkpoint_dict.get("info", dataset.info()) if checkpoint_dict is not None else dataset.info()
-    if checkpoint_dict is not None and 'mapping_digest' in checkpoint_dict:
+    info = (
+        checkpoint_dict.get("info", dataset.info())
+        if checkpoint_dict is not None
+        else dataset.info()
+    )
+    if checkpoint_dict is not None and "mapping_digest" in checkpoint_dict:
         import hashlib
-        current_digest=hashlib.sha256(json.dumps(dataset.get_inverse_mappings(),sort_keys=True,default=str).encode()).hexdigest()
-        if current_digest != checkpoint_dict['mapping_digest']:
-            raise ValueError('Training/evaluation user-item mapping mismatch')
+
+        current_digest = hashlib.sha256(
+            json.dumps(
+                dataset.get_inverse_mappings(), sort_keys=True, default=str
+            ).encode()
+        ).hexdigest()
+        if current_digest != checkpoint_dict["mapping_digest"]:
+            raise ValueError("Training/evaluation user-item mapping mismatch")
     model = model_registry.get_class(model_name)(
         params=params,
         interactions=dataset.train_set,
@@ -157,7 +187,9 @@ def get_train_histories(train_session) -> dict[int, list[int]]:
     user_offsets = getattr(train_session, "_user_offsets", None)
     if flat_items is not None and user_offsets is not None:
         histories = {}
-        for user_idx, (start, end) in enumerate(zip(user_offsets[:-1], user_offsets[1:])):
+        for user_idx, (start, end) in enumerate(
+            zip(user_offsets[:-1], user_offsets[1:])
+        ):
             if end > start:
                 histories[user_idx] = flat_items[start:end].tolist()
         train_session._cached_user_histories = histories
@@ -165,7 +197,10 @@ def get_train_histories(train_session) -> dict[int, list[int]]:
 
     if hasattr(train_session, "_get_user_sessions"):
         sessions = train_session._get_user_sessions()
-        histories = {int(user_idx): [int(item) for item in items] for user_idx, items in sessions.items()}
+        histories = {
+            int(user_idx): [int(item) for item in items]
+            for user_idx, items in sessions.items()
+        }
         train_session._cached_user_histories = histories
         return histories
 
@@ -200,13 +235,23 @@ def recommend_batch(
     for row_idx, mask_sequence in enumerate(mask_sequences):
         if not mask_sequence:
             continue
-        seen_items = torch.tensor(list(set(mask_sequence)), dtype=torch.long, device=device)
+        seen_items = torch.tensor(
+            list(set(mask_sequence)), dtype=torch.long, device=device
+        )
         scores[row_idx, seen_items] = -torch.inf
 
-    top_items_batch = torch.topk(scores, k, dim=1).indices.detach().cpu().tolist()
+    values, indices = torch.topk(scores, min(k, scores.shape[1]), dim=1)
+    top_items_batch = [
+        ids[torch.isfinite(row)].detach().cpu().tolist()
+        for row, ids in zip(values, indices)
+    ]
     results = []
     for user_idx, top_items in zip(user_idxs, top_items_batch):
-        ndcg, recall = ranking_metrics(top_items, positives_by_user[user_idx], k) if compute_metrics else (float("nan"), float("nan"))
+        ndcg, recall = (
+            ranking_metrics(top_items, positives_by_user[user_idx], k)
+            if compute_metrics
+            else (float("nan"), float("nan"))
+        )
         results.append(RankingResult(top_items=top_items, ndcg=ndcg, recall=recall))
     return results
 
@@ -229,7 +274,8 @@ def choose_users(
     users = [
         user_idx
         for user_idx, history in histories.items()
-        if len(history) >= min_history and eval_sparse.indptr[user_idx + 1] > eval_sparse.indptr[user_idx]
+        if len(history) >= min_history
+        and eval_sparse.indptr[user_idx + 1] > eval_sparse.indptr[user_idx]
     ]
     users = sorted(users)
     if max_users is None or max_users >= len(users):
@@ -238,4 +284,3 @@ def choose_users(
         rng = np.random.default_rng(seed)
         return sorted(rng.choice(users, size=max_users, replace=False).tolist())
     return users[:max_users]
-

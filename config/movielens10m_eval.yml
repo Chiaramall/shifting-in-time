@@ -12,9 +12,13 @@ reader:
     timestamp_label: timestamp
   dtypes:
     user_id_type: str
+    timestamp_type: int64
   header: true
 splitter:
   test_splitting:
+    strategy: temporal_holdout
+    ratio: 0.1
+  validation_splitting:
     strategy: temporal_holdout
     ratio: 0.1
 models:

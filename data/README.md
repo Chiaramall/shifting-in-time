@@ -10,8 +10,9 @@ by the framework. Unknown test users/items are filtered by the dataset pipeline.
 | LastFM-1K | `data/lastfm1k/user_events1k.csv` | Complete prepared event CSV; implicit rating 1.0 |
 | MovieLens-10M | `data/movielens10m/movielens10m.csv` | Rating events with original timestamps |
 
-The LastFM YAML preserves the original float32 timestamp conversion. Changing it
-can alter ordering of near-simultaneous events and the resulting split.
+Timestamps are read as 64-bit integers to preserve second-level chronological
+ordering. The latest 10% of each history forms the test split; 10% of the
+remaining history forms the validation split. Neither holdout is used for training.
 
 The complete prepared LastFM CSV available in the source workspace contains
 992 users, 960,402 distinct tracks, and 16,936,136 interactions. Both LastFM

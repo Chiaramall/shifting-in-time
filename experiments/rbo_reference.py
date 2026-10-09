@@ -1,4 +1,6 @@
 """Extrapolated RBO reference used only for metric regression tests."""
+
+
 def rank_biased_overlap(first, second, p=0.9):
     """Extrapolated RBO for equal-length, nonempty rankings without duplicates.
 
@@ -19,4 +21,3 @@ def rank_biased_overlap(first, second, p=0.9):
         agreement = len(seen_first & seen_second) / depth
         score += (1 - p) * agreement * p ** (depth - 1)
     return min(1.0, max(0.0, score + agreement * p ** len(first)))
-

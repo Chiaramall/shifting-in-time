@@ -24,113 +24,112 @@ from typing import Any, Optional
 
 import torch
 import torch.nn.functional as F
-from torch import nn, Tensor
-from torch.nn.init import xavier_uniform_, constant_
+from torch import Tensor, nn
+from torch.nn.init import constant_, xavier_uniform_
 
+from warprec.data.entities import Interactions, Sessions
 from warprec.recommenders.base_recommender import (
     IterativeRecommender,
     SequentialRecommenderUtils,
 )
 from warprec.recommenders.losses import BPRLoss, EmbLoss
-from warprec.data.entities import Interactions, Sessions
 from warprec.utils.enums import DataLoaderType
 from warprec.utils.registry import model_registry
 
 
 class SampledSoftmaxLoss(nn.Module):
     """Sampled Softmax Loss for efficient training with large item vocabularies.
-    
+
     Instead of computing softmax over all items (expensive for recommendation),
     this loss samples a subset of negative items and computes softmax over them
     plus the positive item. This reduces computational cost from O(|I|) to O(k)
     where k is the number of sampled negatives.
-    
+
     Args:
         num_samples (int): Number of negative samples to use. Default: 10.
         temperature (float): Temperature for scaling logits. Default: 1.0.
     """
-    
+
     def __init__(self, num_samples: int = 10, temperature: float = 1.0):
         super().__init__()
         self.num_samples = num_samples
         self.temperature = temperature
-    
+
     def forward(
-        self,
-        seq_output: Tensor,
-        pos_item_emb: Tensor,
-        neg_item_emb: Tensor
+        self, seq_output: Tensor, pos_item_emb: Tensor, neg_item_emb: Tensor
     ) -> Tensor:
         """Compute sampled softmax loss.
-        
+
         Args:
             seq_output (Tensor): Sequence output [batch_size, embedding_size]
             pos_item_emb (Tensor): Positive item embeddings [batch_size, embedding_size]
             neg_item_emb (Tensor): Negative item embeddings [batch_size, num_neg, embedding_size]
-        
+
         Returns:
             Tensor: Scalar loss value
         """
         # Compute positive score: [batch_size]
         pos_score = torch.sum(seq_output * pos_item_emb, dim=-1, keepdim=True)
-        
+
         # Compute negative scores: [batch_size, num_neg]
         neg_score = torch.matmul(seq_output.unsqueeze(1), neg_item_emb.transpose(1, 2))
         neg_score = neg_score.squeeze(1)  # [batch_size, num_neg]
-        
+
         # Concatenate positive and negative scores: [batch_size, 1 + num_neg]
         logits = torch.cat([pos_score, neg_score], dim=1) / self.temperature
-        
+
         # Create targets: first position (0) is always positive
-        targets = torch.zeros(seq_output.size(0), dtype=torch.long, device=seq_output.device)
-        
+        targets = torch.zeros(
+            seq_output.size(0), dtype=torch.long, device=seq_output.device
+        )
+
         # Compute softmax cross-entropy
         loss = F.cross_entropy(logits, targets)
-        
+
         return loss
 
 
 class LiGRLayer(nn.Module):
     """LiGR (Linear + Gating + Residual) Layer.
-    
+
     Efficiently computes: output = x + gate(Linear(x)) * Linear(x)
     where gate is a sigmoid-gated mechanism that learns when to apply the transformation.
     This reduces computational cost compared to standard multi-head attention while
     maintaining expressiveness through gating.
-    
+
     Args:
         d_model (int): Dimension of input/output.
         d_ff (int): Dimension of inner feed-forward layer. Default: 4*d_model.
         dropout (float): Dropout probability. Default: 0.1.
     """
-    
+
     def __init__(self, d_model: int, d_ff: Optional[int] = None, dropout: float = 0.1):
         super().__init__()
         if d_ff is None:
             d_ff = 4 * d_model
-        
+
         self.linear1 = nn.Linear(d_model, d_ff)
         self.linear2 = nn.Linear(d_ff, d_model)
         self.gate = nn.Linear(d_model, d_ff)
-        
+
         self.dropout = nn.Dropout(dropout)
         self.activation = nn.GELU()
-        
+
         self._init_weights()
-    
+
     def _init_weights(self):
         """Initialize weights with Xavier Uniform."""
         for module in [self.linear1, self.linear2, self.gate]:
             xavier_uniform_(module.weight.data)
             if module.bias is not None:
                 constant_(module.bias.data, 0)
-    
+
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass with residual connection.
-        
+
         Args:
             x (Tensor): Input tensor [batch_size, seq_len, d_model]
-        
+
         Returns:
             Tensor: Output tensor [batch_size, seq_len, d_model]
         """
@@ -139,7 +138,7 @@ class LiGRLayer(nn.Module):
         gate_units = torch.sigmoid(self.gate(x))
         gated_hidden = gate_units * hidden
         output = self.dropout(self.linear2(gated_hidden))
-        
+
         return x + output
 
 
@@ -223,7 +222,7 @@ class eSASRec(IterativeRecommender, SequentialRecommenderUtils):
         self.item_embedding = nn.Embedding(
             self.n_items + 1, self.embedding_size, padding_idx=self.n_items
         )
-        
+
         # Relative position embeddings (enhanced over absolute positions)
         if self.use_relative_pos:
             # Relative distances from -max_seq_len to +max_seq_len
@@ -231,7 +230,9 @@ class eSASRec(IterativeRecommender, SequentialRecommenderUtils):
                 2 * self.max_seq_len + 1, self.embedding_size
             )
         else:
-            self.position_embedding = nn.Embedding(self.max_seq_len, self.embedding_size)
+            self.position_embedding = nn.Embedding(
+                self.max_seq_len, self.embedding_size
+            )
 
         self.emb_dropout = nn.Dropout(self.dropout_prob)
         self.layernorm = nn.LayerNorm(self.embedding_size, eps=1e-8)
@@ -239,14 +240,20 @@ class eSASRec(IterativeRecommender, SequentialRecommenderUtils):
         # Choose encoder architecture
         if self.use_ligr:
             # LiGR-based encoder (more efficient, gating mechanism)
-            self.encoder = nn.ModuleList([
-                LiGRLayer(self.embedding_size, self.inner_size, self.attn_dropout_prob)
-                for _ in range(self.n_layers)
-            ])
-            self.layer_norms = nn.ModuleList([
-                nn.LayerNorm(self.embedding_size, eps=1e-8)
-                for _ in range(self.n_layers)
-            ])
+            self.encoder = nn.ModuleList(
+                [
+                    LiGRLayer(
+                        self.embedding_size, self.inner_size, self.attn_dropout_prob
+                    )
+                    for _ in range(self.n_layers)
+                ]
+            )
+            self.layer_norms = nn.ModuleList(
+                [
+                    nn.LayerNorm(self.embedding_size, eps=1e-8)
+                    for _ in range(self.n_layers)
+                ]
+            )
         else:
             # Standard Transformer encoder with self-attention
             encoder_layer = nn.TransformerEncoderLayer(
@@ -262,7 +269,7 @@ class eSASRec(IterativeRecommender, SequentialRecommenderUtils):
                 encoder_layer,
                 num_layers=self.n_layers,
             )
-        
+
         # Precompute causal mask (for shifted sequence objective)
         causal_mask = self._generate_square_subsequent_mask(self.max_seq_len)
         self.register_buffer("causal_mask", causal_mask)
@@ -272,12 +279,14 @@ class eSASRec(IterativeRecommender, SequentialRecommenderUtils):
 
         # Loss functions
         if self.use_sampled_softmax:
-            self.main_loss = SampledSoftmaxLoss(num_samples=self.neg_samples, temperature=1.0)
+            self.main_loss = SampledSoftmaxLoss(
+                num_samples=self.neg_samples, temperature=1.0
+            )
         elif self.neg_samples > 0:
             self.main_loss = BPRLoss()
         else:
             self.main_loss = nn.CrossEntropyLoss()
-        
+
         self.reg_loss = EmbLoss()
 
     def _init_weights_xavier(self, module: nn.Module):
@@ -305,10 +314,10 @@ class eSASRec(IterativeRecommender, SequentialRecommenderUtils):
 
     def train_step(self, batch: Any, *args, **kwargs):
         """Training step with shifted sequence objective.
-        
+
         Shifted Sequence: Uses causal masking to predict the next item in sequence.
         The model learns to predict item[t+1] given items[0:t].
-        
+
         Supports multiple loss functions:
         - Sampled Softmax: Efficient for large item vocabularies (recommended)
         - BPR Loss: Pairwise ranking loss
@@ -324,9 +333,13 @@ class eSASRec(IterativeRecommender, SequentialRecommenderUtils):
 
         # Calculate main loss based on selected loss function
         if self.use_sampled_softmax and self.neg_samples > 0:
-            pos_items_emb = self.item_embedding(pos_item)  # [batch_size, embedding_size]
-            neg_items_emb = self.item_embedding(neg_item)  # [batch_size, neg_samples, embedding_size]
-            
+            pos_items_emb = self.item_embedding(
+                pos_item
+            )  # [batch_size, embedding_size]
+            neg_items_emb = self.item_embedding(
+                neg_item
+            )  # [batch_size, neg_samples, embedding_size]
+
             main_loss = self.main_loss(seq_output, pos_items_emb, neg_items_emb)
 
             # L2 regularization
@@ -383,7 +396,9 @@ class eSASRec(IterativeRecommender, SequentialRecommenderUtils):
         padding_mask = item_seq == self.n_items
 
         # Get item embeddings
-        item_emb = self.item_embedding(item_seq)  # [batch_size, seq_len, embedding_size]
+        item_emb = self.item_embedding(
+            item_seq
+        )  # [batch_size, seq_len, embedding_size]
 
         # Add positional embeddings (relative or absolute)
         if self.use_relative_pos:
@@ -436,13 +451,15 @@ class eSASRec(IterativeRecommender, SequentialRecommenderUtils):
         batch_size, seq_len, dim = x.shape
         # For LiGR layers, apply masking by zeroing future positions
         # This is a simple approach; could be enhanced with proper attention masking
-        causal_indices = torch.tril(torch.ones(seq_len, seq_len, device=x.device)).bool()
-        
+        causal_indices = torch.tril(
+            torch.ones(seq_len, seq_len, device=x.device)
+        ).bool()
+
         # Apply padding mask
         if padding_mask is not None:
             padding_indices = padding_mask.unsqueeze(1).expand(-1, seq_len, -1)
             causal_indices = causal_indices & ~padding_indices
-        
+
         return x
 
     @torch.no_grad()
