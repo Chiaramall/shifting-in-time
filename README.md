@@ -25,8 +25,6 @@ data/lastfm1k/user_events1k.csv
 data/movielens10m/movielens10m.csv
 ```
 
-LastFM uses the complete prepared CSV, without track subsampling. Datasets,
-checkpoints, and experiment outputs are excluded from Git.
 
 ## Protocol
 
