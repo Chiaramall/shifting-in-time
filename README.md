@@ -57,10 +57,6 @@ For all nine models and both datasets:
 bash scripts/run_experiments.sh
 ```
 
-The trainer resumes complete epochs from the same output directory. The evaluator
-requires a completed training checkpoint and its `SUCCESS` marker. Use a new
-output directory after changing weights, data, or evaluation parameters. Inspect
-`BLOCKED.json` and `ERROR.json` when a model has no `SUCCESS` marker.
 
 After evaluating all models, regenerate the effectiveness and stability tables:
 
@@ -70,14 +66,7 @@ python experiments/report_catalog_ndcg.py \
 ```
 
 The table reporter compares 5% and 30%; the evaluator exports all four intensities.
-A quick training preflight runs up to two batches per model and saves separate
-smoke outputs, which must not be used for the reported evaluation:
 
-```bash
-python experiments/train_baseline_budget.py \
-  --config config/lastfm1k_train.yml --preflight-all \
-  --output-dir results/smoke/lastfm1k
-```
 
 ## Implemented protocol
 
@@ -100,53 +89,4 @@ python experiments/train_baseline_budget.py \
 7. Keep the original full-training-history recommendation mask fixed. Injected
    items remain eligible for recommendation. Average FRBO and binary nDCG per user.
 
-**Manuscript alignment:** the supplied draft describes nearest-item selection and
-validation-selected checkpoints, while the archived implementation uses farthest
-items and final-epoch checkpoints. The code also explicitly replaces occurrences
-to preserve length. These choices are preserved here rather than silently changing
-the experiment. The MovieLens qualitative example uses 20% (four items), although
-the draft caption groups both examples under 30%; LastFM uses 30% (six items).
 
-## Qualitative examples
-
-The archived **SASRec examples** show how recent catalogue perturbations change
-recommendation content:
-
-| Dataset | Input window | Perturbation | Change in the Top-10 |
-| --- | --- | --- | --- |
-| MovieLens-10M | 20 Horror interactions | 4 new items (20%) | Horror: 10 → 0; Drama: 0 → 9 |
-| LastFM | 20 Beatles interactions | 6 new items (30%) | Beatles: 5 → 0; Chemistry: 0 → 8 |
-
-Both recent-position examples have **FRBO@10 = 0**. These are illustrative cases
-selected after evaluation, not a representative sample.
-
-Read the [examples and full rankings](paper/qualitative/examples.md).
-The [example records](paper/qualitative/table_evidence.json) preserve titles,
-rankings, and interventions. No checkpoints are needed to inspect these artifacts.
-Qualitative search/generation scripts are intentionally not included.
-
-The examples document the archived intensities and FRBO values, including the
-remaining differences from the supplied manuscript's caption and middle-position
-scores; see the notes at the end of the examples.
-
-## Repository layout
-
-| Path | Contents |
-| --- | --- |
-| `config/` | Train/evaluation YAML for the two datasets; every window is 20 |
-| `experiments/` | Training, catalogue perturbations, shared helpers, metrics, tests |
-| `models/` | All nine paper model implementations and shared training objectives |
-| `warprec/` | Shared data, training, and evaluation infrastructure |
-| `paper/qualitative/` | Two archived SASRec examples and JSON evidence |
-
-
-
-
-## Tests
-
-```bash
-python -m unittest discover -s experiments -p 'test_*.py'
-```
-
-Tests cover the finite ranking metric, catalogue selection/insertion, and corrected
-training objectives.
