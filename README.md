@@ -8,8 +8,7 @@ compares original and perturbed Top-10 rankings with **FRBO@10** (`p = 0.9`) and
 This repository contains the nine models evaluated on **LastFM-1K** and
 **MovieLens-10M**: SASRec, BERT4Rec, gSASRec, GRU4Rec, LightSANs, DuoRec,
 CL4SRec, eSASRec, and BSARec. All supplied configurations use
-**`max_seq_len: 20`**. The value 50 in the manuscript's sequence-length description
-is a typo, as confirmed by the authors.
+**`max_seq_len: 20`**. 
 
 ## Installation
 
