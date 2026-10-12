@@ -5,10 +5,7 @@ At the time of writing this there is no common interface provided by Ray.
 This makes the process of registering these classes not very 'pythonic',
 but it serves its purpose. In future this class must be refactored if possible.
 
-TODO: Refactor this script in a more pythonic way.
 
-Author: Avolio Marco
-Date: 03/03/2025
 """
 
 from typing import Any
