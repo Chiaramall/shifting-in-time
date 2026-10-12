@@ -54,6 +54,20 @@ def farthest_catalog(embeddings, histories, count, device="cpu"):
     return order.cpu().tolist(), values.sqrt().cpu().tolist()
 
 
+def selected_cohort(cohort):
+    """Reject evaluations without eligible users or original top-20 hits."""
+    if not cohort:
+        raise ValueError("Cannot evaluate: no eligible test users")
+    selected = [
+        int(row["user_idx"])
+        for row in cohort
+        if row["selected"] is True or row["selected"] == "True"
+    ]
+    if not selected:
+        raise ValueError("Cannot evaluate: no users with an original hit@20")
+    return selected
+
+
 def run(args):
     import torch
     from embedding_utils import extract_embeddings
@@ -97,6 +111,7 @@ def run(args):
     if mp.exists() and json.loads(mp.read_text()) != meta:
         raise ValueError("Resume parameters differ")
     mp.write_text(json.dumps(meta, indent=2))
+    (output / "SUCCESS").unlink(missing_ok=True)
     dataset, _, _ = initialize_datasets(
         reader=ReaderFactory.get_reader(config=config),
         callback=WarpRecCallback(),
@@ -143,6 +158,8 @@ def run(args):
                 )
             prior.write_text(json.dumps(fingerprint, indent=2))
             if (folder / "SUCCESS").exists():
+                with (folder / "cohort.csv").open() as f:
+                    selected_cohort(list(csv.DictReader(f)))
                 model = None
                 continue
             seqs = {
@@ -178,11 +195,11 @@ def run(args):
                             original_top_items=json.dumps(r.top_items[:10]),
                         )
                     )
+            chosen = selected_cohort(cohort)
             with (folder / "cohort.csv").open("w") as f:
                 w = csv.DictWriter(f, fieldnames=list(cohort[0]))
                 w.writeheader()
                 w.writerows(cohort)
-            chosen = [r["user_idx"] for r in cohort if r["selected"]]
             print(name, "COHORT", len(chosen), "/", len(users), flush=True)
             embeddings = extract_embeddings(model, list(range(model.n_items)), device)
             catalog = {}

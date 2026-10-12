@@ -41,6 +41,17 @@ def mapping_digest(dataset):
     ).hexdigest()
 
 
+def training_digest(dataset):
+    """Fingerprint ordered training histories, including repeated interactions."""
+    digest = hashlib.sha256()
+    histories = get_train_histories(dataset.train_session)
+    for user in sorted(histories):
+        history = histories[user]
+        digest.update(np.asarray([user, len(history)], dtype="<i8").tobytes())
+        digest.update(np.asarray(history, dtype="<i8").tobytes())
+    return digest.hexdigest()
+
+
 def validation_digest(dataset):
     matrix = dataset.eval_set.get_sparse().tocsr()
     digest = hashlib.sha256()
@@ -163,6 +174,7 @@ def train(
         raise ValueError("No training batches")
     digest = mapping_digest(dataset)
     val_digest = validation_digest(validation_dataset)
+    train_digest = training_digest(dataset)
     checkpoint = out / "checkpoint.pt"
     last_checkpoint = out / "last.pt"
     history = []
@@ -173,10 +185,16 @@ def train(
         )
     if last_checkpoint.exists():
         state = torch.load(last_checkpoint, map_location="cpu", weights_only=False)
+        if state.get("training_digest") != train_digest:
+            raise ValueError(
+                "Training histories changed or checkpoint lacks a training fingerprint; "
+                "use a fresh output directory"
+            )
         expected = {
             "training_protocol": TRAINING_PROTOCOL,
             "params": params,
             "mapping_digest": digest,
+            "training_digest": train_digest,
             "validation_digest": val_digest,
             "model_name": name,
             "full_epoch": not smoke,
@@ -205,6 +223,7 @@ def train(
             "seed": 42,
             "training_protocol": TRAINING_PROTOCOL,
             "mapping_digest": digest,
+            "training_digest": train_digest,
             "validation_digest": val_digest,
             "gradient_clip_norm": 1.0,
             "checkpoint_selection": "maximum validation nDCG@10; earliest epoch wins ties",
@@ -264,6 +283,7 @@ def train(
                 "info": dataset.info(),
                 "model_name": name,
                 "mapping_digest": digest,
+                "training_digest": train_digest,
                 "validation_digest": val_digest,
                 "training_protocol": TRAINING_PROTOCOL,
                 "epoch": best_epoch,
@@ -277,6 +297,7 @@ def train(
             "params": params,
             "model_name": name,
             "mapping_digest": digest,
+            "training_digest": train_digest,
             "validation_digest": val_digest,
             "training_protocol": TRAINING_PROTOCOL,
             "epoch": epoch + 1,
